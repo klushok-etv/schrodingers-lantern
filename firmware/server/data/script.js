@@ -1,3 +1,12 @@
+// // get rgb values on first visit
+// async function getInitData() {
+//     const solidColor = document.getElementById("solidColor");
+//     let response = await ajaxGet(`/api/get?color`)
+//     console.log(response, solidColor)
+// }
+
+
+
 function setRGB(red, green, blue) {
 
     ajaxGet(`/api/set?state=1&red=${red}&green=${green}&blue=${blue}`);
@@ -8,24 +17,44 @@ function setState(newState) {
 }
 
 function ajaxGet(url) {
-    const xhttp = new XMLHttpRequest();
-    xhttp.onload = function() {
-        // document.getElementById("alert").innerHTML = this.responseText;
-        return this.responseText;
-    }
-    xhttp.open("GET", url);
-    xhttp.send();
+    return new Promise(function(resolve, reject) {
+        const xhttp = new XMLHttpRequest();
+        xhttp.open("GET", url);
+        xhttp.onload = function() {
+            if (this.status >= 200 && this.status < 300) {
+                resolve(xhttp.response);
+            } else {
+                reject({
+                    status: this.status,
+                    statusText: xhttp.statusText
+                });
+            }
+        };
+        xhttp.onerror = function() {
+            reject({
+                status: this.status,
+                statusText: xhttp.statusText
+            });
+        };
+        xhttp.send();
+    });
 }
 
-window.onload = function() {
-    let colorPicker = document.getElementById("solidColor");
+window.onload = async function() {
+    const colorPicker = document.getElementById("solidColor");
     console.log(colorPicker)
     colorPicker.addEventListener("change", watchColorPicker, false);
+    let response = JSON.parse(await ajaxGet(`/api/get?color`));
+    console.log(response);
+    colorPicker.value = rgbToHex(
+        response.rgb[0],
+        response.rgb[1],
+        response.rgb[2]);
 }
 
 function watchColorPicker(event) {
     const RGB = hexToRgb(event.target.value)
-    // console.log(RGB);
+        // console.log(RGB);
     const response = setRGB(RGB.r, RGB.b, RGB.g);
     console.log(response);
 }
@@ -42,3 +71,8 @@ function hexToRgb(hex) {
 function rgbToHex(r, g, b) {
     return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
 }
+
+function componentToHex(c) {
+    var hex = c.toString(16);
+    return hex.length == 1 ? "0" + hex : hex;
+  }

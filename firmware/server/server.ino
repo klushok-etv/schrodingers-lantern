@@ -28,6 +28,8 @@ const char* password = PASSWORD_1;
 
 const char* PARAM_MESSAGE = "message";
 
+uint8_t rgb[] = {180, 31, 33};
+
 void notFound(AsyncWebServerRequest *request) {
   request->send(404, "text/plain", "Not found");
 }
@@ -91,9 +93,20 @@ void setup() {
 
   // api set endpoint
   server.on("/api/set", HTTP_GET, [](AsyncWebServerRequest * request) {
-    //Send index.htm with default content type
-    //    request->send(200, "application/json", "{test: 'Hello, world'}");
-    request->send(200, "application/json", "{test: 'Hello, world'}");
+    String message;
+   if ( request->hasParam("red") &&
+        request->hasParam("green") &&
+        request->hasParam("blue")) {
+      
+      rgb[0] = request->getParam("red")->value().toInt();
+      rgb[1] = request->getParam("green")->value().toInt();
+      rgb[2] = request->getParam("blue")->value().toInt();
+
+      message = "{status: 'OK'}";
+    }else{
+      message = "{status: 'ERROR', issue:'missing parameters'}";
+    }
+    request->send(200, "application/json", message);
   });
 
   // api toggle endpoint
@@ -105,6 +118,23 @@ void setup() {
     serializeJson(jsonBuffer, *response);
     request->send(response);
   });
+
+  // api get info endpoint
+  server.on("/api/get", HTTP_GET, [](AsyncWebServerRequest * request) {
+    AsyncResponseStream *response = request->beginResponseStream("application/json");
+    DynamicJsonDocument jsonBuffer(1024);
+    if (request->hasParam("color")) {
+      JsonArray json_rgb = jsonBuffer.createNestedArray("rgb");
+      json_rgb.add(rgb[0]);
+      json_rgb.add(rgb[1]);
+      json_rgb.add(rgb[2]);
+    }
+    jsonBuffer["ssid"] = WiFi.SSID();
+    jsonBuffer["status"] = "OK";
+    serializeJson(jsonBuffer, *response);
+    request->send(response);
+  });
+
 
   // Send a GET request to <IP>/get?message=<message>
   server.on("/get", HTTP_GET, [] (AsyncWebServerRequest * request) {
