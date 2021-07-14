@@ -20,3 +20,7 @@ This lantern is a graduation present for our klushok committee member Werner.
  - async webserver
  - webinterface which makes requests to the esp server
  - api on the esp implements functionality
+
+
+### Installation
+To upload HTML and CSS files to the SPIFFS of the ESP32, follow these instructions [randomnerdtutorials.com/install-esp32-filesystem-uploader-arduino-ide/](https://randomnerdtutorials.com/install-esp32-filesystem-uploader-arduino-ide/)
