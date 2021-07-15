@@ -13,12 +13,16 @@
     <div class="logo"></div>
     <div class="container">
         <h1>Schrodingers lantern</h1>
-        <p>GPIO state: <strong> %STATE%</strong></p>
-        <p><button class="button" onclick="setState(1)">ON</button></p>
-        <p><button class="button button2" onclick="setState(0)">OFF</button></p>
-        <div class="colorBox">
+        <p>status: <strong> Connecting... </strong></p>
+        <p><button class="button" onclick="setState(1)">ON</button>
+        <button class="button button2" onclick="setState(0)">OFF</button></p>
+        <div class="colorBox inputContainer">
             <input type="color" name="color" id="solidColor" value="#B41f21">
-            <p for="solidColor">Color</p>
+            <p class="label" for="solidColor">Color</p>
+        </div>
+        <div class="slideContainer inputContainer">
+            <input type="range" class="slider" id="brightness" name="brightness" min="0" max="100" value="0">
+            <p class="label" for="brightness">brightness: <span id="brightness_percentage">0</span>%</p>
         </div>
 
     </div>

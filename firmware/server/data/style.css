@@ -17,7 +17,8 @@ html {
     width: 300px;
     height: 170px;
 }
-.logo:hover{
+
+.logo:hover {
     background: url("logo.svg");
     background-repeat: no-repeat;
     background-position: center;
@@ -30,7 +31,6 @@ h1 {
     color: #0F3376;
     padding: 2vh;
 }
-
 
 p {
     font-size: 1.5rem;
@@ -49,33 +49,85 @@ p {
     cursor: pointer;
 }
 
-.colorBox {
+
+.inputContainer{
     position: relative;
+}
+
+
+
+.colorBox {
+    /* position: relative; */
     height: 44px;
 }
 
-.colorBox>p {
+.label  {
     position: absolute;
     display: inline-block;
-    left: 50%;
+    left: calc(50% + 30px);
     margin: 7px;
 }
 
-input[type=color]{
+input[type=color] {
     position: absolute;
-    left: calc(50% - 60px);
-	width: 40px;
-	height: 40px;
-	border: none;
-	border-radius: 40px;
-	background: none;
+    left: calc(50% - 120px);
+    width: 100px;
+    height: 40px;
+    border: none;
+    border-radius: 10px;
+    background: none;
 }
+
 input[type="color"]::-webkit-color-swatch-wrapper {
-	padding: 0;
+    padding: 0;
 }
+
 input[type="color"]::-webkit-color-swatch {
-	border: solid 1px #000; /*change color of the swatch border here*/
-	border-radius: 40px;
+    border: solid 1px #000;
+    /*change color of the swatch border here*/
+    border-radius: 10px;
+}
+
+.slideContainer {
+    height: 25px;
+    margin: 20px;
+}
+
+.slider {
+    position: absolute;
+    left: calc(50% - 200px);
+    top: 13px;
+    -webkit-appearance: none;
+    width: 200px;
+    height: 10px;
+    background: #d3d3d3;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+    border-radius: 10px;
+}
+
+.slider:hover {
+    opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    background: #04AA6D;
+    cursor: pointer;
+    border-radius: 12px;
+}
+
+.slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    background: #04AA6D;
+    cursor: pointer;
+    border-radius: 12px;
 }
 
 @media screen and (max-width:1000px) {
@@ -86,7 +138,7 @@ input[type="color"]::-webkit-color-swatch {
         /* min-width: 275px;
         max-width: 350px; */
     }
-    .logo:hover{
+    .logo:hover {
         position: relative;
         width: 100%;
     }

@@ -5,11 +5,66 @@
 //     console.log(response, solidColor)
 // }
 
+let color = { r: 180, b: 31, g: 33 };
+let intensity = 100;
+
+window.onload = async function() {
+    // todo implement heartbeat
+
+    const brightnessEl = document.getElementById("brightness")
+
+    // slider percentage update
+    brightnessEl.oninput = function(event) {
+        const span = document.getElementById("brightness_percentage");
+        let newVal = event.target.value
+        span.innerText = parseInt(newVal);
+    }
+
+    // send updates when slider is released
+    brightnessEl.addEventListener('change', function(event) {
+        // todo validation
+        intensity = event.target.value;
+        console.log(intensity);
+        setRGB();
+    }, false);
+
+    // make request to obtain color and intensity
+    const colorPicker = document.getElementById("solidColor");
+    colorPicker.addEventListener("change", watchColorPicker, false);
+    let response = JSON.parse(await ajaxGet(`/api/get?color`));
+    intensity = response.intensity;
+    brightnessEl.value = intensity;
+    document.getElementById("brightness_percentage").innerHTML = intensity;
 
 
-function setRGB(red, green, blue) {
+    color_arr = response.rgb; // this is a 
+    color.r = parseInt(color_arr[0] / (intensity / 100));
+    color.g = parseInt(color_arr[1] / (intensity / 100));
+    color.b = parseInt(color_arr[2] / (intensity / 100));
+    
+    console.log(color, "init")
+    colorPicker.value = rgbToHex(
+        color.r,
+        color.g,
+        color.b);
 
-    ajaxGet(`/api/set?state=1&red=${red}&green=${green}&blue=${blue}`);
+    console.log(response);
+
+
+}
+
+
+function setRGB() {
+    // todo validate input
+    console.log(color)
+    const i = intensity / 100
+    const red = parseInt(color.r * i);
+    const green = parseInt(color.g * i);
+    const blue = parseInt(color.b * i);
+
+    console.log(color)
+
+    ajaxGet(`/api/set?state=1&red=${red}&green=${green}&blue=${blue}&intensity=${intensity}`);
 }
 
 function setState(newState) {
@@ -40,23 +95,10 @@ function ajaxGet(url) {
     });
 }
 
-window.onload = async function() {
-    const colorPicker = document.getElementById("solidColor");
-    console.log(colorPicker)
-    colorPicker.addEventListener("change", watchColorPicker, false);
-    let response = JSON.parse(await ajaxGet(`/api/get?color`));
-    console.log(response);
-    colorPicker.value = rgbToHex(
-        response.rgb[0],
-        response.rgb[1],
-        response.rgb[2]);
-}
-
 function watchColorPicker(event) {
     const RGB = hexToRgb(event.target.value)
-        // console.log(RGB);
-    const response = setRGB(RGB.r, RGB.b, RGB.g);
-    console.log(response);
+    color = RGB;
+    const response = setRGB();
 }
 
 function hexToRgb(hex) {
@@ -75,4 +117,4 @@ function rgbToHex(r, g, b) {
 function componentToHex(c) {
     var hex = c.toString(16);
     return hex.length == 1 ? "0" + hex : hex;
-  }
+}
