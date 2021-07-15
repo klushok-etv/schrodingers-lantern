@@ -33,8 +33,8 @@
 #include "credentials.h"
 #include <FastLED.h>
 
-#define NUM_LEDS 10
-#define DATA_PIN 5
+#define NUM_LEDS 35
+#define DATA_PIN 13
 
 // Define the array of leds
 CRGB leds[NUM_LEDS];
@@ -126,9 +126,9 @@ void setup() {
       rgb[2] = request->getParam("blue")->value().toInt();
       intensity = request->getParam("intensity")->value().toInt();
 
-      message = "{status: 'OK'}";
+      message = "{\"status\": \"OK\"}";
     } else {
-      message = "{status: 'ERROR', issue:'missing parameters'}";
+      message = "{\"status\": \"ERROR\", \"issue\":\"missing parameters\"}";
     }
     request->send(200, "application/json", message);
   });
@@ -196,8 +196,13 @@ void setup() {
 void loop() {
 
   // Turn the LED on, then pause
-  leds[0] = CRGB(rgb[0], rgb[1], rgb[2]);
-  FastLED.show();
+  for( int i = 0; i < NUM_LEDS; i++) {
+      leds[i] = CRGB(rgb[0], rgb[2], rgb[1]);
+      FastLED.show();
+      FastLED.delay(100);
+    }
+  
+  
 //  FastLED.delay(500);
 //
 //  // Turn the LED on, then pause

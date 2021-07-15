@@ -24,7 +24,6 @@ window.onload = async function() {
     brightnessEl.addEventListener('change', function(event) {
         // todo validation
         intensity = event.target.value;
-        console.log(intensity);
         setRGB();
     }, false);
 
@@ -42,15 +41,10 @@ window.onload = async function() {
     color.g = parseInt(color_arr[1] / (intensity / 100));
     color.b = parseInt(color_arr[2] / (intensity / 100));
     
-    console.log(color, "init")
     colorPicker.value = rgbToHex(
         color.r,
         color.g,
         color.b);
-
-    console.log(response);
-
-
 }
 
 
@@ -61,8 +55,6 @@ function setRGB() {
     const red = parseInt(color.r * i);
     const green = parseInt(color.g * i);
     const blue = parseInt(color.b * i);
-
-    console.log(color)
 
     ajaxGet(`/api/set?state=1&red=${red}&green=${green}&blue=${blue}&intensity=${intensity}`);
 }
