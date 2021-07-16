@@ -176,7 +176,7 @@ void setup() {
     json_rgb.add(rgb[1]);
     json_rgb.add(rgb[2]);
     jsonBuffer["intensity"] = intensity;
-    jsonBuffer["state"] = state;
+    jsonBuffer["state"] = state ? "on" : "off";
     jsonBuffer["ssid"] = WiFi.SSID();
     jsonBuffer["RSSI"] = WiFi.RSSI();
     jsonBuffer["localIP"] = WiFi.localIP();

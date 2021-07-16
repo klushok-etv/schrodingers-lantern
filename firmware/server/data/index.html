@@ -11,19 +11,44 @@
 
 <body>
     <div class="logo"></div>
+
     <div class="container">
         <h1>Schrodingers lantern</h1>
-        <p>status: <strong> Connecting... </strong></p>
-        <p><button class="button" onclick="setState(1)">ON</button>
-        <button class="button button2" onclick="setState(0)">OFF</button></p>
-        <div class="colorBox inputContainer">
-            <input type="color" name="color" id="solidColor" value="#B41f21">
-            <p class="label" for="solidColor">Color</p>
+        <div class="statusContainer">
+            <p class="info">status: <strong id="statusField"> Connecting... </strong></p>
+            <svg id="RSSI" width="50" height="35.296" version="1.1" viewBox="0 0 13.229 9.3387"
+                xmlns="http://www.w3.org/2000/svg">
+                <g transform="translate(-47.938 -20.029)">
+                    <g fill="none" stroke="#808080" stroke-width="1.1705">
+                        <path class="bar excellent"
+                            d="m48.351 23.17a8.7786 8.7786 0 0 1 6.1921-2.556 8.7786 8.7786 0 0 1 6.2102 2.574" />
+                        <path class="bar good"
+                            d="m50.03 24.849a6.404 6.404 0 0 1 4.513-1.8604 6.404 6.404 0 0 1 4.5311 1.8785" />
+                        <path class="bar fair"
+                            d="m51.677 26.496a4.075 4.075 0 0 1 2.8662-1.1783 4.075 4.075 0 0 1 2.8841 1.1962" />
+                    </g>
+                    <path class="bar weak"
+                    d="m52.839 27.596 1.7255 1.7255 1.7005-1.7005a2.4361 2.4361 0 0 0-1.7262-0.71798 2.4361 2.4361 0 0 0-1.6998 0.69298z"
+                        fill="#808080" />
+                </g>
+                <g id="wifiCross" fill="#f00" stroke="#f00" stroke-width="1px">
+                <path d="m3.6343 0.9578c2.0016 2.0016 4.0016 4.0016 6 6"/>
+                <path d="m9.6342 0.9578c-2 2-4 4-6 6"/>
+               </g>
+            </svg>
         </div>
-        <div class="slideContainer inputContainer">
-            <input type="range" class="slider" id="brightness" name="brightness" min="0" max="100" value="0">
-            <p class="label" for="brightness">brightness: <span id="brightness_percentage">0</span>%</p>
-        </div>
+    </div>
+    <p><button class="button" onclick="setState(1)">ON</button>
+        <button class="button button2" onclick="setState(0)">OFF</button>
+    </p>
+    <div class="colorBox inputContainer">
+        <input type="color" name="color" id="solidColor" value="#B41f21">
+        <p class="label" for="solidColor">Color</p>
+    </div>
+    <div class="slideContainer inputContainer">
+        <input type="range" class="slider" id="brightness" name="brightness" min="0" max="100" value="0">
+        <p class="label" for="brightness">brightness: <span id="brightness_percentage">0</span>%</p>
+    </div>
 
     </div>
 </body>

@@ -10,7 +10,7 @@ This lantern is a graduation present for our klushok committee member Werner.
 
 
 ## Concept
-![concept drawing](assembly.png)
+![concept drawing](image/assembly.png)
 
 
 

@@ -55,7 +55,6 @@ p {
 }
 
 
-
 .colorBox {
     /* position: relative; */
     height: 44px;
@@ -129,6 +128,27 @@ input[type="color"]::-webkit-color-swatch {
     cursor: pointer;
     border-radius: 12px;
 }
+
+
+.bar.connected{
+    stroke: #007aff;
+}
+
+.bar.weak.connected{
+    fill: #007aff;
+    stroke-width: 0;
+}
+
+.info, #RSSI {
+    display: inline-block;
+}
+#RSSI{
+    margin-bottom: 10px;
+    vertical-align: middle;
+    margin-left: 20px;
+}
+
+
 
 @media screen and (max-width:1000px) {
     .logo {
