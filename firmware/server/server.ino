@@ -64,14 +64,20 @@ void notFound(AsyncWebServerRequest *request) {
 }
 
 void setup() {
+  bool bootErrors = false;
 
   pinMode(BTN_PIN, INPUT);
   Serial.begin(115200);
+
+  // init leds
+  FastLED.addLeds<WS2813, DATA_PIN, GRB>(leds, NUM_LEDS);
 
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
   if (WiFi.waitForConnectResult() != WL_CONNECTED) {
     Serial.printf("WiFi Failed!\n");
+    bootErrors = true;
+    blinkLantern(2, 500, CRGB::Red);
     return;
   }
 
@@ -81,14 +87,12 @@ void setup() {
   // Initialize SPIFFS
   if (!SPIFFS.begin(true)) {
     Serial.println("An Error has occurred while mounting SPIFFS");
+    blinkLantern(4, 1000, CRGB::Red);
+    bootErrors = true;
     return;
   }
   listDir(SPIFFS, "/", 1);
   Serial.println("starting server");
-
-  //      server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
-  //          request->send(200, "text/plain", "Hello, world");
-  //      });
 
   // NOTE ensure the files have been uploaded to SPIFFS using the dedicated uploader!
   // show index.html
@@ -114,7 +118,6 @@ void setup() {
     //Send index.htm with default content type
     request->send(SPIFFS, "/logo.svg");
   });
-
 
   // make js script available
   server.on("/klushok.svg", HTTP_GET, [](AsyncWebServerRequest * request) {
@@ -181,7 +184,7 @@ void setup() {
     jsonBuffer["RSSI"] = WiFi.RSSI();
     jsonBuffer["localIP"] = WiFi.localIP();
     jsonBuffer["hostName"] = WiFi.getHostname();
-    
+
     jsonBuffer["status"] = "OK";
     serializeJson(jsonBuffer, *response);
     request->send(response);
@@ -191,18 +194,20 @@ void setup() {
 
   server.begin();
 
-  // init leds
-  FastLED.addLeds<WS2813, DATA_PIN, GRB>(leds, NUM_LEDS);
-
   // indicate succesfull boot
-  blinkGreen(2, 500);
+  if(!bootErrors){
+  blinkLantern(2, 500, CRGB::Green);}
+  else{
+    Serial.println("Some boot errors occured");
+    blinkLantern(2, 500, CRGB::Blue);
+  }
 
 }
 
-void blinkGreen(uint8_t n, unsigned int ms) {
+void blinkLantern(uint8_t n, unsigned int ms, CRGB color) {
   for (int j = 0; j < n; j++) {
     for ( int i = NUM_LEDS - 1; i >= 0; --i) {
-      leds[i] = CRGB::Green;
+      leds[i] = color;
     }
     FastLED.show();
     FastLED.delay(ms);
