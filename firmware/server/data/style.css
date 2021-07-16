@@ -49,18 +49,15 @@ p {
     cursor: pointer;
 }
 
-
-.inputContainer{
+.inputContainer {
     position: relative;
 }
 
-
 .colorBox {
-    /* position: relative; */
     height: 44px;
 }
 
-.label  {
+.label {
     position: absolute;
     display: inline-block;
     left: calc(50% + 30px);
@@ -129,34 +126,30 @@ input[type="color"]::-webkit-color-swatch {
     border-radius: 12px;
 }
 
-
-.bar.connected{
+.bar.connected {
     stroke: #007aff;
 }
 
-.bar.weak.connected{
+.bar.weak.connected {
     fill: #007aff;
     stroke-width: 0;
 }
 
-.info, #RSSI {
+.info,
+#RSSI {
     display: inline-block;
 }
-#RSSI{
+
+#RSSI {
     margin-bottom: 10px;
     vertical-align: middle;
     margin-left: 20px;
 }
 
-
-
 @media screen and (max-width:1000px) {
     .logo {
         position: relative;
         width: 100%;
-        /* width:70%; */
-        /* min-width: 275px;
-        max-width: 350px; */
     }
     .logo:hover {
         position: relative;

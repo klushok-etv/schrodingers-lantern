@@ -1,16 +1,11 @@
-// // get rgb values on first visit
-// async function getInitData() {
-//     const solidColor = document.getElementById("solidColor");
-//     let response = await ajaxGet(`/api/get?color`)
-//     console.log(response, solidColor)
-// }
-
 let color = { r: 180, b: 31, g: 33 };
 let intensity = 100;
 let RSSI = -90
 var interval = setInterval(function() {
     updateInfo();
 }, 5000);
+let updateInfoFlag = false; // specifies if info should be updated after previous connection loss
+
 
 window.onload = async function() {
     // todo implement heartbeat
@@ -36,25 +31,29 @@ window.onload = async function() {
     colorPicker.addEventListener("change", watchColorPicker, false);
     let response = JSON.parse(await ajaxGet(`/api/status`));
     console.log(response)
-    intensity = response.intensity;
-    brightnessEl.value = intensity;
-    document.getElementById("brightness_percentage").innerHTML = intensity;
+    updateBrightness(response);
+    updateColor(response);
 
-    // parse received current color
-    color_arr = response.rgb; // this is a 
-    color.r = parseInt(color_arr[0] / (intensity / 100));
-    color.g = parseInt(color_arr[1] / (intensity / 100));
-    color.b = parseInt(color_arr[2] / (intensity / 100));
 
-    // set current value to colorPicker input
-    colorPicker.value = rgbToHex(
-        color.r,
-        color.g,
-        color.b);
+    // intensity = response.intensity;
+    // brightnessEl.value = intensity;
+    // document.getElementById("brightness_percentage").innerHTML = intensity;
+
+    // // parse received current color
+    // color_arr = response.rgb; // this is a 
+    // color.r = parseInt(color_arr[0] / (intensity / 100));
+    // color.g = parseInt(color_arr[1] / (intensity / 100));
+    // color.b = parseInt(color_arr[2] / (intensity / 100));
+
+    // // set current value to colorPicker input
+    // colorPicker.value = rgbToHex(
+    //     color.r,
+    //     color.g,
+    //     color.b);
 
     // set RSSI
-    RSSI = response.RSSI;
-    updateRSSI();
+    // RSSI = response.RSSI;
+    updateRSSI(false, response);
 
     // set status text
     document.getElementById("statusField").innerText = response.status;
@@ -65,13 +64,40 @@ async function updateInfo() {
     let response = JSON.parse(await ajaxGet(`/api/status`));
     document.getElementById("statusField").innerText = response.status;
     RSSI = response.RSSI;
-    updateRSSI();
+    updateRSSI(false, response);
+
+    if (updateInfoFlag) {
+        // update brightness and color
+        updateBrightness(response);
+        updateColor(response);
+        updateInfoFlag = false;
+    }
+}
+
+function updateBrightness(response) {
+    intensity = response.intensity;
+    document.getElementById("brightness").value = intensity;
+    document.getElementById("brightness_percentage").innerHTML = intensity;
+
+}
+
+function updateColor(response) {
+    // parse received current color
+    color_arr = response.rgb; // this is a 
+    color.r = parseInt(color_arr[0] / (intensity / 100));
+    color.g = parseInt(color_arr[1] / (intensity / 100));
+    color.b = parseInt(color_arr[2] / (intensity / 100));
+
+    // set current value to colorPicker input
+    document.getElementById("solidColor").value = rgbToHex(
+        color.r,
+        color.g,
+        color.b);
 }
 
 
-
 // todo create timeout function to periodically request status and RSSI
-function updateRSSI(failed = false) {
+function updateRSSI(failed = false, response) {
     const svgEl = document.getElementById("RSSI");
     if (failed) {
         svgEl.getElementById("wifiCross").style.display = "unset";
@@ -80,6 +106,7 @@ function updateRSSI(failed = false) {
         svgEl.getElementById("wifiCross").style.display = "none";
     }
 
+    RSSI = response.RSSI;
 
     const bars = svgEl.getElementsByClassName("bar"); // 0=excellent, 3=weak
     let numConnectedBars = 0;
@@ -158,7 +185,8 @@ function ajaxGet(url) {
 
 function setErrorInfo() {
     document.getElementById("statusField").innerText = "Connecting...";
-    updateRSSI(true);
+    updateRSSI(true, null);
+    updateInfoFlag = true;
 }
 
 function watchColorPicker(event) {
