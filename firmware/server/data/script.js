@@ -8,8 +8,6 @@ let updateInfoFlag = false; // specifies if info should be updated after previou
 
 
 window.onload = async function() {
-    // todo implement heartbeat
-
     const brightnessEl = document.getElementById("brightness")
 
     // slider percentage update
@@ -33,26 +31,6 @@ window.onload = async function() {
     console.log(response)
     updateBrightness(response);
     updateColor(response);
-
-
-    // intensity = response.intensity;
-    // brightnessEl.value = intensity;
-    // document.getElementById("brightness_percentage").innerHTML = intensity;
-
-    // // parse received current color
-    // color_arr = response.rgb; // this is a 
-    // color.r = parseInt(color_arr[0] / (intensity / 100));
-    // color.g = parseInt(color_arr[1] / (intensity / 100));
-    // color.b = parseInt(color_arr[2] / (intensity / 100));
-
-    // // set current value to colorPicker input
-    // colorPicker.value = rgbToHex(
-    //     color.r,
-    //     color.g,
-    //     color.b);
-
-    // set RSSI
-    // RSSI = response.RSSI;
     updateRSSI(false, response);
 
     // set status text
@@ -96,7 +74,6 @@ function updateColor(response) {
 }
 
 
-// todo create timeout function to periodically request status and RSSI
 function updateRSSI(failed = false, response) {
     const svgEl = document.getElementById("RSSI");
     if (failed) {
