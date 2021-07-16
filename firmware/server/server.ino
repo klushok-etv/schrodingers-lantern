@@ -33,8 +33,15 @@
 #include "credentials.h"
 #include <FastLED.h>
 
+// led config
 #define NUM_LEDS 35
 #define DATA_PIN 13
+
+// button config
+#define BTN_PIN 15
+bool prev_btn_state = false; // default btn value is off
+
+bool state = false;
 
 // Define the array of leds
 CRGB leds[NUM_LEDS];
@@ -48,7 +55,7 @@ const char* password = PASSWORD_1;
 
 const char* PARAM_MESSAGE = "message";
 
-uint8_t rgb[] = {180, 31, 33};
+uint8_t rgb[] = {163, 0, 0}; // default color
 uint8_t intensity = 100; // only saved to be able to return this value to the web UI, color intensity calculated client side
 
 // todo make lantern animation with redirect button to home
@@ -58,7 +65,9 @@ void notFound(AsyncWebServerRequest *request) {
 
 void setup() {
 
+  pinMode(BTN_PIN, INPUT);
   Serial.begin(115200);
+
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
   if (WiFi.waitForConnectResult() != WL_CONNECTED) {
@@ -128,59 +137,54 @@ void setup() {
 
       message = "{\"status\": \"OK\"}";
     } else {
-      message = "{\"status\": \"ERROR\", \"issue\":\"missing parameters\"}";
+      message = "{\"status\": \"ERROR\", \"message\":\"missing parameters\"}";
     }
     request->send(200, "application/json", message);
+    turnOn(); // set color
   });
 
   // api toggle endpoint
   server.on("/api/toggle", HTTP_GET, [](AsyncWebServerRequest * request) {
-    AsyncResponseStream *response = request->beginResponseStream("application/json");
-    DynamicJsonDocument jsonBuffer(1024);
-    jsonBuffer["heap"] = ESP.getFreeHeap();
-    jsonBuffer["ssid"] = WiFi.SSID();
-    serializeJson(jsonBuffer, *response);
-    request->send(response);
+    String message;
+    if (request->hasParam("state")) {
+      Serial.println(request->getParam("state")->value().toInt());
+      Serial.println(bool(request->getParam("state")->value().toInt()));
+
+      if (request->getParam("state")->value().toInt() == 1) {
+        turnOn();
+        message = "{\"status\":\"OK\"";
+      }
+      else if (request->getParam("state")->value().toInt() == 0) {
+        turnOff();
+        message = "{\"status\":\"OK\"";
+      }
+      else {
+        message = "{\"status\":\"ERROR\", \"message\":\"Invalid parameter supplied\"";
+      }
+    } else {
+      message = "{\"status\": \"ERROR\", \"message\":\"missing parameters\"}";
+    }
+    request->send(200, "application/json", message);
   });
 
   // api get info endpoint
-  server.on("/api/get", HTTP_GET, [](AsyncWebServerRequest * request) {
+  server.on("/api/status", HTTP_GET, [](AsyncWebServerRequest * request) {
     AsyncResponseStream *response = request->beginResponseStream("application/json");
     DynamicJsonDocument jsonBuffer(1024);
-    if (request->hasParam("color")) {
-      JsonArray json_rgb = jsonBuffer.createNestedArray("rgb");
-      json_rgb.add(rgb[0]);
-      json_rgb.add(rgb[1]);
-      json_rgb.add(rgb[2]);
-      jsonBuffer["intensity"] = intensity;
-    }
+    JsonArray json_rgb = jsonBuffer.createNestedArray("rgb");
+    json_rgb.add(rgb[0]);
+    json_rgb.add(rgb[1]);
+    json_rgb.add(rgb[2]);
+    jsonBuffer["intensity"] = intensity;
+    jsonBuffer["state"] = state;
     jsonBuffer["ssid"] = WiFi.SSID();
+    jsonBuffer["RSSI"] = WiFi.RSSI();
+    jsonBuffer["localIP"] = WiFi.localIP();
+    jsonBuffer["hostName"] = WiFi.getHostname();
+    
     jsonBuffer["status"] = "OK";
     serializeJson(jsonBuffer, *response);
     request->send(response);
-  });
-
-
-  // Send a GET request to <IP>/get?message=<message>
-  server.on("/get", HTTP_GET, [] (AsyncWebServerRequest * request) {
-    String message;
-    if (request->hasParam(PARAM_MESSAGE)) {
-      message = request->getParam(PARAM_MESSAGE)->value();
-    } else {
-      message = "No message sent";
-    }
-    request->send(200, "text/plain", "Hello, GET: " + message);
-  });
-
-  // Send a POST request to <IP>/post with a form field message set to <message>
-  server.on("/post", HTTP_POST, [](AsyncWebServerRequest * request) {
-    String message;
-    if (request->hasParam(PARAM_MESSAGE, true)) {
-      message = request->getParam(PARAM_MESSAGE, true)->value();
-    } else {
-      message = "No message sent";
-    }
-    request->send(200, "text/plain", "Hello, POST: " + message);
   });
 
   server.onNotFound(notFound);
@@ -188,35 +192,63 @@ void setup() {
   server.begin();
 
   // init leds
-  FastLED.addLeds<WS2813, DATA_PIN, BRG>(leds, NUM_LEDS);
+  FastLED.addLeds<WS2813, DATA_PIN, GRB>(leds, NUM_LEDS);
 
+  // indicate succesfull boot
+  blinkGreen(2, 500);
+
+}
+
+void blinkGreen(uint8_t n, unsigned int ms) {
+  for (int j = 0; j < n; j++) {
+    for ( int i = NUM_LEDS - 1; i >= 0; --i) {
+      leds[i] = CRGB::Green;
+    }
+    FastLED.show();
+    FastLED.delay(ms);
+    FastLED.clear(true);
+    FastLED.delay(ms);
+  }
+}
+
+
+void turnOff() {
+  FastLED.clear(true);
+  state = false;
+  Serial.println("Leds turned off");
+}
+
+void turnOn() {
+  for ( int i = NUM_LEDS - 1; i >= 0; --i) {
+    leds[i] = CRGB(rgb[0], rgb[1], rgb[2]);
+  }
+  FastLED.show();
+  state = true;
+  Serial.println("Leds turned on");
 }
 
 
 void loop() {
 
-  // Turn the LED on, then pause
-  for( int i = 0; i < NUM_LEDS; i++) {
-      leds[i] = CRGB(rgb[0], rgb[2], rgb[1]);
-      FastLED.show();
-      FastLED.delay(100);
+  // check if btn has rising edge
+  bool curBtnState = digitalRead(BTN_PIN);
+  if (curBtnState && !prev_btn_state) {
+    // toggle
+    prev_btn_state = curBtnState;
+    if (state) {
+      turnOff();
+    } else {
+      turnOn();
     }
-  
-  
-//  FastLED.delay(500);
-//
-//  // Turn the LED on, then pause
-//  leds[0] = CRGB::Green;
-//  FastLED.show();
-//  FastLED.delay(5000);
-//  
-//  // Turn the LED on, then pause
-//  leds[0] = CRGB::Blue;
-//  FastLED.show();
-//  FastLED.delay(5000);
-//
-//  // Now turn the LED off, then pause
-//  leds[0] = CRGB::Black;
-//  FastLED.show();
-//  FastLED.delay(5000);
+  } else {
+    prev_btn_state = curBtnState;
+  }
+
+  //  // Turn the LED on, then pause
+  //  for ( int i = 0; i < NUM_LEDS; i++) {
+  //    leds[i] = CRGB(rgb[0], rgb[2], rgb[1]);
+  //    FastLED.show();
+  //    FastLED.delay(100);
+  //  }
+
 }
