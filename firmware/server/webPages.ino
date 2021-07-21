@@ -1,4 +1,6 @@
 void setupWebPages() {
+  server.reset(); // ensure all previous pages are removed
+  
   // NOTE ensure the files have been uploaded to SPIFFS using the dedicated uploader!
   // show index.html
   server.on("/", HTTP_GET, [](AsyncWebServerRequest * request) {

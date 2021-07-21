@@ -5,11 +5,9 @@ void readCredentials(char *ssid, char *pw)
     Serial.printf("Reading file: %s\r\n", WM_CRED_FILE);
 
     File file = SPIFFS.open(WM_CRED_FILE, "r");
-    // Serial.println(SPIFFS.exists(WM_CRED_FILE));
     if (!file || file.isDirectory())
     {
         Serial.println("- failed to open file for reading");
-        // File file = fs.open(WM_CRED_FILE, FILE_WRITE);
         return;
     }
 
@@ -22,8 +20,10 @@ void readCredentials(char *ssid, char *pw)
         Serial.write(c);
         if (c != '\n')
         {
-            if (row == 0) ssid[col] = c;
-            else pw[col] = c;
+            if (row == 0)
+                ssid[col] = c;
+            else
+                pw[col] = c;
             col++;
         }
         else
@@ -31,15 +31,8 @@ void readCredentials(char *ssid, char *pw)
             col = 0;
             row++;
         }
-
-        // Serial.write(file.read());
-        // Serial.println(file.readString());
     }
     file.close();
-    // Serial.println(message[1]);
-    // Serial.println(message[2]);
-    // return (const char*)message;
-    // return message;
 }
 
 void writeCredentials(const char *ssid, const char *pw)
@@ -62,7 +55,7 @@ void writeCredentials(const char *ssid, const char *pw)
     file.close();
 }
 
-bool WiFiManagerBegin()
+bool WiFiManagerBegin(const char *ap_ssid, const char *ap_pw)
 {
     char ssid[30] = "";
     char pw[30] = "";
@@ -83,7 +76,7 @@ bool WiFiManagerBegin()
         WiFi.mode(WIFI_AP); // switch to AP mode
         delay(100);
 
-        WiFi.softAP("portal_ssid", "portal_pass");
+        WiFi.softAP(AP_SSID, AP_PASS);
         return false;
     }
 }
@@ -160,7 +153,7 @@ void listNetworks(int n)
 
 void setupWMWebpages()
 {
-    // server.reset();
+    server.reset();
     server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
               {
                   //Send index.htm with default content type
@@ -211,17 +204,20 @@ void setupWMWebpages()
                       AsyncWebParameter *ssid = request->getParam("ssid", true);
                       AsyncWebParameter *pw = request->getParam("pw", true);
 
-                      //   Serial.println(WiFiConnect(
-                      //       ssid->value().c_str(),
-                      //       pw->value().c_str()));
                       writeCredentials(
                           ssid->value().c_str(),
                           pw->value().c_str());
-                    //   readCredentials();
+                      ESP.restart();
                   }
                   else
                   {
                       request->send(404, "application/json", "Something went wrong");
                   }
               });
+}
+
+void clearWMCredentials()
+{
+    Serial.println("Clearing credentials");
+    writeCredentials("-", "-");
 }

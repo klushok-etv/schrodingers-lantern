@@ -41,13 +41,10 @@
 #pragma error "!!!!!!!!"
 #endif
 
-#include "ESPAsync_WiFiManager_Lite.h"
-#include "wifiManagerConfig.h"
+const char* AP_SSID = "Schrodingers Lantern";
+const char* AP_PASS = "Schrodinger";
 #define HOSTNAME "Schrodingers Lantern"
-#define ESP_WM_LITE_DEBUG_OUTPUT Serial
-#define SCAN_WIFI_NETWORKS      true
-#define USE_DYNAMIC_PARAMETERS  false
-ESPAsync_WiFiManager_Lite* ESPAsync_WiFiManager;
+
 
 // led configj
 #define NUM_LEDS 35
@@ -92,35 +89,18 @@ void setup() {
   }
   listDir(SPIFFS, "/", 1); // show files saved on SPIFF
 
+//  clearWMCredentials();
 
-  if (!WiFiManagerBegin()) {
+  if (!WiFiManagerBegin(AP_SSID, AP_PASS)) {
     // setup wifimanager config portal
-    server.reset();
     setupWMWebpages();
   } else {
     // Initialize webpages
-    server.reset();
     setupWebPages();
   }
   server.onNotFound(notFound);
   server.begin();
 
-
-
-  //    ESPAsync_WiFiManager = new ESPAsync_WiFiManager_Lite();
-  //    ESPAsync_WiFiManager->clearConfigData(); // for debugging
-  //    ESPAsync_WiFiManager->setConfigPortal(AP_SSID, AP_PASS);
-  //    ESPAsync_WiFiManager->begin(HOSTNAME);
-
-  //   wifi setup
-  //    WiFi.mode(WIFI_STA);
-  //    WiFi.begin(ssid, password);
-  //    if (WiFi.waitForConnectResult() != WL_CONNECTED) {
-  //      Serial.printf("WiFi Failed!\n");
-  //      bootErrors = true;
-  //      blinkLantern(2, 500, CRGB::Red);
-  //      return;
-  //    }
   Serial.print("IP Address: ");
   Serial.println(WiFi.localIP());
   Serial.print("WiFi status: ");
@@ -128,9 +108,6 @@ void setup() {
 
 
   Serial.println("starting server");
-
-
-
 
   // indicate succesfull boot
   if (!bootErrors) {
