@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="script.js" defer></script>
+    <title>WiFi Manager</title>
+</head>
+
+<body>
+    <img src="../klushok.svg" alt="" class="logo">
+    <h1>Hello!</h1>
+    <h3>Please configure your wifi credentials here</h3>
+    <form action="/set" method="POST">
+        <div class="inputField">
+            <label for="ssid">SSID</label>
+            <select id="ssid" name="ssid"></select>
+        </div>
+        <div class="inputField">
+            <label for="lname">Password</label>
+            <input type="password" id="pw" name="pw" placeholder="Password">
+        </div>
+        <div class="inputField">
+            <input type="submit" value="Submit">
+        </div>
+    </form>
+</body>
+
+</html>

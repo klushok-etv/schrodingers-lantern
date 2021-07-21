@@ -17,6 +17,7 @@
 //
 //---------------------------------------------------------------------------
 
+
 #include <Arduino.h>
 #ifdef ESP32
 #include <WiFi.h>
@@ -28,19 +29,33 @@
 #include <ESPAsyncWebServer.h>
 #include "FS.h"
 #include "SPIFFS.h"
-#include "AsyncJson.h"
+//#include "AsyncJson.h"
 #include "ArduinoJson.h"
 #include "credentials.h"
 #include <FastLED.h>
 
-// led config
+#ifndef CREDENTIALS_H
+#pragma error "!!!!!!!!"
+#pragma error "PLEASE COPY credentials.h.template TO credentials.h"
+#pragma error "AND CONFIGURE YOUR CREDENTIALS"
+#pragma error "!!!!!!!!"
+#endif
+
+#include "ESPAsync_WiFiManager_Lite.h"
+#include "wifiManagerConfig.h"
+#define HOSTNAME "Schrodingers Lantern"
+#define ESP_WM_LITE_DEBUG_OUTPUT Serial
+#define SCAN_WIFI_NETWORKS      true
+#define USE_DYNAMIC_PARAMETERS  false
+ESPAsync_WiFiManager_Lite* ESPAsync_WiFiManager;
+
+// led configj
 #define NUM_LEDS 35
 #define DATA_PIN 13
 
 // button config
 #define BTN_PIN 15
 bool prev_btn_state = false; // default btn value is off
-
 bool state = false;
 
 // Define the array of leds
@@ -62,39 +77,60 @@ void notFound(AsyncWebServerRequest *request) {
 
 void setup() {
   bool bootErrors = false;
-
   pinMode(BTN_PIN, INPUT);
   Serial.begin(115200);
+  Serial.println("Starting Lantern");
 
   // Initialize leds
   FastLED.addLeds<WS2813, DATA_PIN, GRB>(leds, NUM_LEDS);
-
-  // wifi setup
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(ssid, password);
-  if (WiFi.waitForConnectResult() != WL_CONNECTED) {
-    Serial.printf("WiFi Failed!\n");
-    bootErrors = true;
-    blinkLantern(2, 500, CRGB::Red);
-    return;
-  }
-  Serial.print("IP Address: ");
-  Serial.println(WiFi.localIP());
-
+  ////
   // Initialize SPIFFS
   if (!SPIFFS.begin(true)) {
     Serial.println("An Error has occurred while mounting SPIFFS");
     blinkLantern(4, 1000, CRGB::Red);
     bootErrors = true;
-    return;
   }
   listDir(SPIFFS, "/", 1); // show files saved on SPIFF
-  Serial.println("starting server");
 
-  // Initialize webpages
-  setupWebPages();
+
+  if (!WiFiManagerBegin()) {
+    // setup wifimanager config portal
+    server.reset();
+    setupWMWebpages();
+  } else {
+    // Initialize webpages
+    server.reset();
+    setupWebPages();
+  }
   server.onNotFound(notFound);
   server.begin();
+
+
+
+  //    ESPAsync_WiFiManager = new ESPAsync_WiFiManager_Lite();
+  //    ESPAsync_WiFiManager->clearConfigData(); // for debugging
+  //    ESPAsync_WiFiManager->setConfigPortal(AP_SSID, AP_PASS);
+  //    ESPAsync_WiFiManager->begin(HOSTNAME);
+
+  //   wifi setup
+  //    WiFi.mode(WIFI_STA);
+  //    WiFi.begin(ssid, password);
+  //    if (WiFi.waitForConnectResult() != WL_CONNECTED) {
+  //      Serial.printf("WiFi Failed!\n");
+  //      bootErrors = true;
+  //      blinkLantern(2, 500, CRGB::Red);
+  //      return;
+  //    }
+  Serial.print("IP Address: ");
+  Serial.println(WiFi.localIP());
+  Serial.print("WiFi status: ");
+  Serial.println(WiFi.status());
+
+
+  Serial.println("starting server");
+
+
+
 
   // indicate succesfull boot
   if (!bootErrors) {
@@ -137,7 +173,7 @@ void turnOn() {
 
 
 void loop() {
-
+  //    ESPAsync_WiFiManager->run();
   // check if btn has rising edge
   bool curBtnState = digitalRead(BTN_PIN);
   if (curBtnState && !prev_btn_state) {

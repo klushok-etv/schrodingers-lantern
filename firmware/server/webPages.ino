@@ -78,20 +78,20 @@ void setupWebPages() {
   // api get info endpoint
   server.on("/api/status", HTTP_GET, [](AsyncWebServerRequest * request) {
     AsyncResponseStream *response = request->beginResponseStream("application/json");
-    DynamicJsonDocument jsonBuffer(1024);
-    JsonArray json_rgb = jsonBuffer.createNestedArray("rgb");
+    StaticJsonDocument<256> doc;
+    doc["intensity"] = intensity;
+    doc["state"] = state ? "on" : "off";
+    doc["status"] = "OK";
+    doc["RSSI"] = WiFi.RSSI();
+    JsonArray json_rgb = doc.createNestedArray("rgb");
     json_rgb.add(rgb[0]);
     json_rgb.add(rgb[1]);
     json_rgb.add(rgb[2]);
-    jsonBuffer["intensity"] = intensity;
-    jsonBuffer["state"] = state ? "on" : "off";
-    jsonBuffer["ssid"] = WiFi.SSID();
-    jsonBuffer["RSSI"] = WiFi.RSSI();
-    jsonBuffer["localIP"] = WiFi.localIP();
-    jsonBuffer["hostName"] = WiFi.getHostname();
-
-    jsonBuffer["status"] = "OK";
-    serializeJson(jsonBuffer, *response);
+//    
+//    // jsonBuffer["ssid"] = WiFi.SSID();
+//    // jsonBuffer["localIP"] = WiFi.localIP();
+//    // jsonBuffer["hostName"] = WiFi.getHostname();
+    serializeJson(doc, *response);
     request->send(response);
   });
 
