@@ -19,6 +19,7 @@
 
 
 #include <Arduino.h>
+#include <ESPmDNS.h>
 #ifdef ESP32
 #include <WiFi.h>
 #include <AsyncTCP.h>
@@ -29,9 +30,8 @@
 #include <ESPAsyncWebServer.h>
 #include "FS.h"
 #include "SPIFFS.h"
-//#include "AsyncJson.h"
 #include "ArduinoJson.h"
-#include "credentials.h"
+//#include "credentials.h"
 #include <FastLED.h>
 
 #ifndef CREDENTIALS_H
@@ -43,7 +43,7 @@
 
 const char* AP_SSID = "Schrodingers Lantern";
 const char* AP_PASS = "Schrodinger";
-#define HOSTNAME "Schrodingers Lantern"
+#define HOSTNAME "lantern"
 
 
 // led configj
@@ -60,9 +60,6 @@ CRGB leds[NUM_LEDS];
 
 // Define webserver on port 80
 AsyncWebServer server(80);
-
-const char* ssid = SSID_1;
-const char* password = PASSWORD_1;
 
 uint8_t rgb[] = {163, 0, 0}; // default color
 uint8_t intensity = 100; // only saved to be able to return this value to the web UI, color intensity calculated client side
@@ -89,7 +86,12 @@ void setup() {
   }
   listDir(SPIFFS, "/", 1); // show files saved on SPIFF
 
-//  clearWMCredentials();
+  if (!MDNS.begin(HOSTNAME)) {
+    Serial.println("Error starting mDNS");
+    return;
+  }
+
+  //  clearWMCredentials();
 
   if (!WiFiManagerBegin(AP_SSID, AP_PASS)) {
     // setup wifimanager config portal
