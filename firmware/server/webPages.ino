@@ -57,9 +57,6 @@ void setupWebPages() {
   server.on("/api/toggle", HTTP_GET, [](AsyncWebServerRequest * request) {
     String message;
     if (request->hasParam("state")) {
-      Serial.println(request->getParam("state")->value().toInt());
-      Serial.println(bool(request->getParam("state")->value().toInt()));
-
       if (request->getParam("state")->value().toInt() == 1) {
         turnOn();
         message = "{\"status\":\"OK\"";
@@ -97,7 +94,9 @@ void setupWebPages() {
     request->send(response);
   });
 
-
-
-
+  // reset wifi credentials
+  server.on("/reset", HTTP_GET, [](AsyncWebServerRequest * request){
+    clearWMCredentials();
+    request->redirect("/");
+  });
 }

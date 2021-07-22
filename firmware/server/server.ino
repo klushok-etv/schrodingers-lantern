@@ -14,6 +14,7 @@
 //
 // History:
 //    15-Jun-2021     bdenouden   First semi complete version
+//    22-Jul-2021     bdenouden   OTA & mDNS added
 //
 //---------------------------------------------------------------------------
 
@@ -31,8 +32,10 @@
 #include "FS.h"
 #include "SPIFFS.h"
 #include "ArduinoJson.h"
-//#include "credentials.h"
+#include "credentials.h"
 #include <FastLED.h>
+#include <WiFiUdp.h>
+#include <ArduinoOTA.h>
 
 #ifndef CREDENTIALS_H
 #pragma error "!!!!!!!!"
@@ -40,11 +43,6 @@
 #pragma error "AND CONFIGURE YOUR CREDENTIALS"
 #pragma error "!!!!!!!!"
 #endif
-
-const char* AP_SSID = "Schrodingers Lantern";
-const char* AP_PASS = "Schrodinger";
-#define HOSTNAME "lantern"
-
 
 // led configj
 #define NUM_LEDS 35
@@ -99,6 +97,7 @@ void setup() {
   } else {
     // Initialize webpages
     setupWebPages();
+    setupOTA();
   }
   server.onNotFound(notFound);
   server.begin();
@@ -120,6 +119,38 @@ void setup() {
     blinkLantern(2, 500, CRGB::Blue);
   }
 
+}
+
+void setupOTA() {
+  ArduinoOTA.setHostname(HOSTNAME);
+  ArduinoOTA.setPassword(OTA_PWD);
+  ArduinoOTA
+  .onStart([]() {
+    String type;
+    if (ArduinoOTA.getCommand() == U_FLASH)
+      type = "sketch";
+    else // U_SPIFFS
+      type = "filesystem";
+
+    // NOTE: if updating SPIFFS this would be the place to unmount SPIFFS using SPIFFS.end()
+    Serial.println("Start updating " + type);
+  })
+  .onEnd([]() {
+    Serial.println("\nEnd");
+  })
+  .onProgress([](unsigned int progress, unsigned int total) {
+    Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
+  })
+  .onError([](ota_error_t error) {
+    Serial.printf("Error[%u]: ", error);
+    if (error == OTA_AUTH_ERROR) Serial.println("Auth Failed");
+    else if (error == OTA_BEGIN_ERROR) Serial.println("Begin Failed");
+    else if (error == OTA_CONNECT_ERROR) Serial.println("Connect Failed");
+    else if (error == OTA_RECEIVE_ERROR) Serial.println("Receive Failed");
+    else if (error == OTA_END_ERROR) Serial.println("End Failed");
+  });
+
+  ArduinoOTA.begin();
 }
 
 void blinkLantern(uint8_t n, unsigned int ms, CRGB color) {
@@ -152,7 +183,8 @@ void turnOn() {
 
 
 void loop() {
-  //    ESPAsync_WiFiManager->run();
+  ArduinoOTA.handle();
+
   // check if btn has rising edge
   bool curBtnState = digitalRead(BTN_PIN);
   if (curBtnState && !prev_btn_state) {
