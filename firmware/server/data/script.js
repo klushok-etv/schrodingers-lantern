@@ -96,7 +96,7 @@ function updateRSSI(failed = false, response) {
     } else if (RSSI < -50) {
         // good connection
         numConnectedBars = 3;
-    } else if (RSSI > -50) {
+    } else if (RSSI >= -50) {
         // excellent connection
         numConnectedBars = 4;
     } else {

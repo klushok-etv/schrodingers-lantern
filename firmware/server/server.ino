@@ -84,11 +84,6 @@ void setup() {
   }
   listDir(SPIFFS, "/", 1); // show files saved on SPIFF
 
-  if (!MDNS.begin(HOSTNAME)) {
-    Serial.println("Error starting mDNS");
-    return;
-  }
-
   //  clearWMCredentials();
 
   if (!WiFiManagerBegin(AP_SSID, AP_PASS)) {
@@ -99,6 +94,12 @@ void setup() {
     setupWebPages();
     setupOTA();
   }
+
+  if (!MDNS.begin(HOSTNAME)) {
+    Serial.println("Error starting mDNS");
+    return;
+  }
+
   server.onNotFound(notFound);
   server.begin();
 
