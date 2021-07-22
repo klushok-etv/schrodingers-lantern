@@ -1,10 +1,10 @@
 #define WM_CRED_FILE "/wm_cred.dat"
 
 /*
- * Retrieve credentials from file in SPIFFS
- * Writes to the ssid and pw pointers which must be 
- * created in the scope of the function calling this function
- */
+   Retrieve credentials from file in SPIFFS
+   Writes to the ssid and pw pointers which must be
+   created in the scope of the function calling this function
+*/
 void readCredentials(char *ssid, char *pw)
 {
   Serial.printf("Reading file: %s\r\n", WM_CRED_FILE);
@@ -40,8 +40,8 @@ void readCredentials(char *ssid, char *pw)
 }
 
 /*
- * Write credentials to the credential file in SPIFFS
- */
+   Write credentials to the credential file in SPIFFS
+*/
 void writeCredentials(const char *ssid, const char *pw)
 {
   Serial.printf("Writing to file: %s\r\n", WM_CRED_FILE);
@@ -95,10 +95,10 @@ bool WiFiManagerBegin(const char *ap_ssid, const char *ap_pw)
 }
 
 /*
- * Attempts to connect to wifi given the credentials 
- * from the arguments.
- * Returns true if succesful, false if connection failed
- */
+   Attempts to connect to wifi given the credentials
+   from the arguments.
+   Returns true if succesful, false if connection failed
+*/
 bool WiFiConnect(const char *ssid, const char *pw)
 {
   WiFi.mode(WIFI_STA);
@@ -197,8 +197,16 @@ void setupWMWebpages()
     request->send(SPIFFS, "/klushok.svg");
   });
 
+  // make icon available
+  server.on("/favicon.svg", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send(SPIFFS, "/favicon.svg");
+  });
+  server.on("/favicon.png", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send(SPIFFS, "/favicon.png");
+  });
+
   // Return scan results as JSON.
-  // This function doesn't actually run the scan, it only returns 
+  // This function doesn't actually run the scan, it only returns
   // results from the previous scan!
   server.on("/scan", HTTP_GET, [](AsyncWebServerRequest * request)
   {
@@ -227,10 +235,10 @@ void setupWMWebpages()
     if (request->hasParam("ssid", true) &&
         request->hasParam("pw", true))
     {
-//      request->send(200, "application/json", "Attempting to connect...");
+      //      request->send(200, "application/json", "Attempting to connect...");
       char buf[100] = "http://";
-      strcat(buf,HOSTNAME);
-      strcat(buf,".local");
+      strcat(buf, HOSTNAME);
+      strcat(buf, ".local");
       request->redirect(buf);
       Serial.println("Credentials received");
       AsyncWebParameter *ssid = request->getParam("ssid", true);

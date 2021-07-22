@@ -1,8 +1,5 @@
-// const dummydata = `[{"rssi":-83,"ssid":"SilenceoftheLANs","secure":3},{"rssi":-53,"ssid":"Deze is het Oma","secure":3},{"rssi":-86,"ssid":"TP-LINK_E170","secure":3},{"rssi":-86,"ssid":"Duckies","secure":3},{"rssi":-88,"ssid":"ZygorXS3","secure":3},{"rssi":-89,"ssid":"Nick","secure":3},{"rssi":-90,"ssid":"Mike's 1094","secure":4},{"rssi":-91,"ssid":"Mike's 1094-gast","secure":0},{"rssi":-94,"ssid":"TellUrWiFiLoveHer","secure":4}]`
-
 window.onload = async function() {
     let response = JSON.parse(await ajaxGet(`/scan`));
-    // response = JSON.parse(dummydata);
     const select = document.getElementById("ssid");
 
     if (response.length == 0) {

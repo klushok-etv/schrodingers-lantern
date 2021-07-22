@@ -1,0 +1,15 @@
+<svg width="144mm" height="144mm" version="1.1" viewBox="0 0 144 144" xmlns="http://www.w3.org/2000/svg">
+ <style>
+ .eye{fill:#ffffff; stroke:#ffffff;}
+ .body{fill:#000; stroke: #1d1d1b;}
+ @media (prefers-color-scheme: dark) {
+    .eye{fill:#000000; stroke:#000000;}
+    .body{stroke: #ffffff; fill:#ffffff;}
+ }
+ </style>
+ <g stroke-linecap="round" stroke-linejoin="round">
+  <path class="body" d="m30.644 4.1906c-20.391 62.4-43.821 77.431-7.5381 109.63 0.759 14.377 2.9552 30.225 2.9552 30.225l111.35 1.0779s-9.1138-21.596-15.7-31.196c35.871-32.027 12.518-47.504-7.8208-109.74-4.728 13.2-8.4928 22.969-11.319 29.243-14.372-1.791-46.251-1.787-60.615 0-2.826-6.274-6.5898-16.043-11.319-29.243z" stroke-miterlimit="10" stroke-width="8.375"/>
+  <path class="eye"  d="m23.493 82.767 26.106-21.479"  stroke-width="10"/>
+  <path class="eye"  d="m49.646 82.63-26.339-21.191" stroke-width="10"/>
+ </g>
+</svg>

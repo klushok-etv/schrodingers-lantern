@@ -1,6 +1,6 @@
 void setupWebPages() {
   server.reset(); // ensure all previous pages are removed
-  
+
   // NOTE ensure the files have been uploaded to SPIFFS using the dedicated uploader!
   // show index.html
   server.on("/", HTTP_GET, [](AsyncWebServerRequest * request) {
@@ -10,25 +10,29 @@ void setupWebPages() {
 
   // make css available
   server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest * request) {
-    //Send index.htm with default content type
     request->send(SPIFFS, "/style.css");
   });
 
   // make js script available
   server.on("/script.js", HTTP_GET, [](AsyncWebServerRequest * request) {
-    //Send index.htm with default content type
     request->send(SPIFFS, "/script.js");
   });
 
   // make logo available
   server.on("/logo.svg", HTTP_GET, [](AsyncWebServerRequest * request) {
-    //Send index.htm with default content type
     request->send(SPIFFS, "/logo.svg");
+  });
+
+  // make icon available
+  server.on("/favicon.svg", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send(SPIFFS, "/favicon.svg");
+  });
+  server.on("/favicon.png", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send(SPIFFS, "/favicon.png");
   });
 
   // make js script available
   server.on("/klushok.svg", HTTP_GET, [](AsyncWebServerRequest * request) {
-    //Send index.htm with default content type
     request->send(SPIFFS, "/klushok.svg");
   });
 
@@ -86,16 +90,16 @@ void setupWebPages() {
     json_rgb.add(rgb[0]);
     json_rgb.add(rgb[1]);
     json_rgb.add(rgb[2]);
-//    
-//    // jsonBuffer["ssid"] = WiFi.SSID();
-//    // jsonBuffer["localIP"] = WiFi.localIP();
-//    // jsonBuffer["hostName"] = WiFi.getHostname();
+    //
+    //    // jsonBuffer["ssid"] = WiFi.SSID();
+    //    // jsonBuffer["localIP"] = WiFi.localIP();
+    //    // jsonBuffer["hostName"] = WiFi.getHostname();
     serializeJson(doc, *response);
     request->send(response);
   });
 
   // reset wifi credentials
-  server.on("/reset", HTTP_GET, [](AsyncWebServerRequest * request){
+  server.on("/reset", HTTP_GET, [](AsyncWebServerRequest * request) {
     clearWMCredentials();
     request->redirect("/");
   });

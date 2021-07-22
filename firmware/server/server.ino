@@ -129,10 +129,10 @@ void setupOTA() {
     String type;
     if (ArduinoOTA.getCommand() == U_FLASH)
       type = "sketch";
-    else // U_SPIFFS
+    else { // U_SPIFFS
       type = "filesystem";
-
-    // NOTE: if updating SPIFFS this would be the place to unmount SPIFFS using SPIFFS.end()
+      SPIFFS.end(); // If updating SPIFFS, unmount SPIFFS using SPIFFS.end()
+    }
     Serial.println("Start updating " + type);
   })
   .onEnd([]() {
@@ -164,7 +164,6 @@ void blinkLantern(uint8_t n, unsigned int ms, CRGB color) {
     FastLED.delay(ms);
   }
 }
-
 
 void turnOff() {
   FastLED.clear(true);
@@ -198,4 +197,6 @@ void loop() {
   } else {
     prev_btn_state = curBtnState;
   }
+
+
 }
