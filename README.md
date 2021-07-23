@@ -31,19 +31,27 @@ The suggested data uploader does work over OTA provided there is not password se
 
 Alternatively there are tools available which can generate ([spiffsgen.py](https://github.com/espressif/esp-idf/blob/166c30e7b2ed1dcaae56179329540a862915208a/components/spiffs/spiffsgen.py)) and upload ([otatool.py](https://github.com/espressif/esp-idf/blob/166c30e/components/app_update/otatool.py)) spiffs data.
 
-## error messages
 
-### 2 short green flashes
-All good, there were not issues when booting the lantern!
+### Connect to WiFi
 
-### 2 short red flashes
-No wifi connection could be established
+visit the network "Schrodingers lantern"
+![](image/wifimanager.png)
+Select your network from the dropdown menu, enter your wifi credentials and press "Submit". The ESP will restart and if the wifi credentials are correct you will be redirected to the webUI using mDNS.
+![](image/webUI.png)
+
+## Boot messages
 
 ### 4 long red flashes
-The SPIFFS memory could not (correctly) be read. To solve this, power cycle the lantern.
+The SPIFFS memory could not (correctly) be read. The lantern will restart automatically. If this keeps happening, connect a usb cable to the ESP to check what is happening via the serial bus.
+
+### 2 short green flashes
+All good, there were not issues when booting the lantern! You can use the mDNS configured hostname to access the webUI and API.
+
+### 2 short orange flashes
+mDNS could not be initialized, the lantern can only be reached using its ip address. This address can be obtained using tools like nmap.
 
 ## 2 short blue flashes
-Something went wrong, please power cycle the lantern.
+The lantern is in AP mode, follow the [Connect to wifi](#Connect-to-wifi) steps.
 
 ### Installation
 To upload HTML and CSS files to the SPIFFS of the ESP32, follow these instructions [randomnerdtutorials.com/install-esp32-filesystem-uploader-arduino-ide/](https://randomnerdtutorials.com/install-esp32-filesystem-uploader-arduino-ide/)

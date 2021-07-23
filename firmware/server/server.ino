@@ -43,7 +43,7 @@
 #pragma error "!!!!!!!!"
 #endif
 
-// led configj
+// led config
 #define NUM_LEDS 35
 #define DATA_PIN 13
 
