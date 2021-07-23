@@ -29,6 +29,43 @@ void listDir(fs::FS &fs, const char * dirname, uint8_t levels) {
     file = root.openNextFile();
   }
 }
+
+
+void getParam(char* p) {
+  Serial.printf("Reading file: %s\r\n", PAR_FILE);
+  File file = SPIFFS.open(PAR_FILE, "r");
+  if (!file || file.isDirectory())
+  {
+    Serial.println("ERROR: failed to open file for reading");
+    p[0] = rgb[0]; p[1] = rgb[1]; p[2] = rgb[2]; p[3] = intensity;
+    return;
+  }
+  uint8_t i = 0;
+  while (file.available()) {
+    p[i] = file.read();
+    i++;
+  }
+  file.close();
+}
+
+void saveParam() {
+  Serial.printf("Writing to file: %s\r\n", PAR_FILE);
+  File file = SPIFFS.open(PAR_FILE, "w");
+  if (!file)
+  {
+    Serial.println("ERROR: failed to open file for writing");
+    return;
+  }
+  if (
+    file.write(rgb[0]) &&
+    file.write(rgb[1]) &&
+    file.write(rgb[2]) &&
+    file.write(intensity)
+  ) Serial.println("- file written");
+  else Serial.println("- write failed");
+  file.close();
+}
+
 //
 //void readFile(fs::FS &fs, const char * path) {
 //  Serial.printf("Reading file: %s\r\n", path);

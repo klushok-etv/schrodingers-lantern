@@ -55,6 +55,7 @@ void setupWebPages() {
     }
     request->send(200, "application/json", message);
     turnOn(); // set color
+    saveParam(); // save parameters to SPIFFS
   });
 
   // api toggle endpoint

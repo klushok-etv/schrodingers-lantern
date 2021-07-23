@@ -18,7 +18,6 @@
 //
 //---------------------------------------------------------------------------
 
-
 #include <Arduino.h>
 #include <ESPmDNS.h>
 #ifdef ESP32
@@ -59,48 +58,61 @@ CRGB leds[NUM_LEDS];
 // Define webserver on port 80
 AsyncWebServer server(80);
 
+#define PAR_FILE "/par.dat"
 uint8_t rgb[] = {163, 0, 0}; // default color
-uint8_t intensity = 100; // only saved to be able to return this value to the web UI, color intensity calculated client side
+uint8_t intensity = 100;     // only saved to be able to return this value to the web UI, color intensity calculated client side
 
 // todo make lantern animation with redirect button to home
-void notFound(AsyncWebServerRequest *request) {
+void notFound(AsyncWebServerRequest *request)
+{
   request->send(404, "text/plain", "Not found");
 }
 
-void setup() {
-  bool bootErrors = false;
+void setup()
+{
+  CRGB bootColor = CRGB::Green; // unless errors occur, boots correctly
   pinMode(BTN_PIN, INPUT);
   Serial.begin(115200);
   Serial.println("Starting Lantern");
 
   // Initialize leds
   FastLED.addLeds<WS2813, DATA_PIN, GRB>(leds, NUM_LEDS);
-  ////
+
   // Initialize SPIFFS
-  if (!SPIFFS.begin(true)) {
+  if (!SPIFFS.begin(true))
+  {
     Serial.println("An Error has occurred while mounting SPIFFS");
     blinkLantern(4, 1000, CRGB::Red);
-    bootErrors = true;
+    delay(1000);
+    ESP.restart();
   }
-  listDir(SPIFFS, "/", 1); // show files saved on SPIFF
 
-  //  clearWMCredentials();
+  // show files saved on SPIFFS
+  listDir(SPIFFS, "/", 1);
 
-  if (!WiFiManagerBegin(AP_SSID, AP_PASS)) {
+  // start wifiManager or webUI
+  if (!WiFiManagerBegin(AP_SSID, AP_PASS))
+  {
     // setup wifimanager config portal
     setupWMWebpages();
-  } else {
-    // Initialize webpages
+    bootColor = CRGB::Blue;
+  }
+  else
+  {
+    // Initialize webpages and OTA
     setupWebPages();
     setupOTA();
-  }
 
-  if (!MDNS.begin(HOSTNAME)) {
-    Serial.println("Error starting mDNS");
-    return;
+    // setup mDNS
+    if (!MDNS.begin(HOSTNAME))
+    {
+      Serial.println("Error starting mDNS");
+      bootColor = CRGB::Orange;
+    }
   }
 
   server.onNotFound(notFound);
+  Serial.println("starting server");
   server.begin();
 
   Serial.print("IP Address: ");
@@ -108,55 +120,65 @@ void setup() {
   Serial.print("WiFi status: ");
   Serial.println(WiFi.status());
 
-
-  Serial.println("starting server");
+  // get saved parameters from SPIFFS
+  char params[5];
+  getParam(params);
+  rgb[0] = params[0]; rgb[1] = params[1]; rgb[2] = params[2];
+  intensity = params[3];
 
   // indicate succesfull boot
-  if (!bootErrors) {
-    blinkLantern(2, 500, CRGB::Green);
-  }
-  else {
-    Serial.println("Some boot errors occured");
-    blinkLantern(2, 500, CRGB::Blue);
-  }
-
+  blinkLantern(2, 500, bootColor);
 }
 
-void setupOTA() {
+void setupOTA()
+{
   ArduinoOTA.setHostname(HOSTNAME);
-  ArduinoOTA.setPassword(OTA_PWD);
+  ArduinoOTA.setPassword(OTA_PASS);
   ArduinoOTA
-  .onStart([]() {
+  .onStart([]()
+  {
     String type;
     if (ArduinoOTA.getCommand() == U_FLASH)
       type = "sketch";
-    else { // U_SPIFFS
+    else
+    { // U_SPIFFS
       type = "filesystem";
       SPIFFS.end(); // If updating SPIFFS, unmount SPIFFS using SPIFFS.end()
     }
     Serial.println("Start updating " + type);
   })
-  .onEnd([]() {
+  .onEnd([]()
+  {
     Serial.println("\nEnd");
   })
-  .onProgress([](unsigned int progress, unsigned int total) {
+  .onProgress([](unsigned int progress, unsigned int total)
+  {
     Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
   })
-  .onError([](ota_error_t error) {
+  .onError([](ota_error_t error)
+  {
     Serial.printf("Error[%u]: ", error);
-    if (error == OTA_AUTH_ERROR) Serial.println("Auth Failed");
-    else if (error == OTA_BEGIN_ERROR) Serial.println("Begin Failed");
-    else if (error == OTA_CONNECT_ERROR) Serial.println("Connect Failed");
-    else if (error == OTA_RECEIVE_ERROR) Serial.println("Receive Failed");
-    else if (error == OTA_END_ERROR) Serial.println("End Failed");
+    if (error == OTA_AUTH_ERROR)
+      Serial.println("Auth Failed");
+    else if (error == OTA_BEGIN_ERROR)
+      Serial.println("Begin Failed");
+    else if (error == OTA_CONNECT_ERROR)
+      Serial.println("Connect Failed");
+    else if (error == OTA_RECEIVE_ERROR)
+      Serial.println("Receive Failed");
+    else if (error == OTA_END_ERROR)
+      Serial.println("End Failed");
   });
 
   ArduinoOTA.begin();
 }
 
-void blinkLantern(uint8_t n, unsigned int ms, CRGB color) {
-  for (int j = 0; j < n; j++) {
-    for ( int i = NUM_LEDS - 1; i >= 0; --i) {
+void blinkLantern(uint8_t n, unsigned int ms, CRGB color)
+{
+  for (int j = 0; j < n; j++)
+  {
+    for (int i = NUM_LEDS - 1; i >= 0; --i)
+    {
       leds[i] = color;
     }
     FastLED.show();
@@ -166,14 +188,17 @@ void blinkLantern(uint8_t n, unsigned int ms, CRGB color) {
   }
 }
 
-void turnOff() {
+void turnOff()
+{
   FastLED.clear(true);
   state = false;
   Serial.println("Leds turned off");
 }
 
-void turnOn() {
-  for ( int i = NUM_LEDS - 1; i >= 0; --i) {
+void turnOn()
+{
+  for (int i = NUM_LEDS - 1; i >= 0; --i)
+  {
     leds[i] = CRGB(rgb[0], rgb[1], rgb[2]);
   }
   FastLED.show();
@@ -181,23 +206,21 @@ void turnOn() {
   Serial.println("Leds turned on");
 }
 
-
-void loop() {
+void loop()
+{
   ArduinoOTA.handle();
 
   // check if btn has rising edge
   bool curBtnState = digitalRead(BTN_PIN);
-  if (curBtnState && !prev_btn_state) {
+  if (curBtnState && !prev_btn_state)
+  {
     // toggle
     prev_btn_state = curBtnState;
-    if (state) {
-      turnOff();
-    } else {
-      turnOn();
-    }
-  } else {
+    if (state) turnOff();
+    else turnOn();
+  }
+  else
+  {
     prev_btn_state = curBtnState;
   }
-
-
 }
