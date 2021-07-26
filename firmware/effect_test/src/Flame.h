@@ -5,9 +5,6 @@
 #include <stdint.h>
 #include <arduino.h>
 #include <FastLED.h>
-#ifndef NUM_LEDS
-#define NUM_LEDS 35
-#endif
 
 class Flame : public Effect
 {
@@ -19,7 +16,7 @@ private:
     byte heat[NUM_LEDS];
 
 public:
-    Flame(CRGB*, uint8_t, uint8_t, uint8_t);
+    Flame(CRGB*, uint32_t, uint8_t, uint8_t);
     ~Flame();
     void run();
 };

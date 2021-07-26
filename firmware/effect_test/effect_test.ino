@@ -1,5 +1,6 @@
 #include <FastLED.h>
 #include "src/flame.h"
+#include "src/RGB_step.h"
 #define NUM_LEDS 35
 #define DATA_PIN 13
 CRGB leds[NUM_LEDS];
@@ -14,6 +15,7 @@ void setup() {
   
   //Flame(*leds, fps, cooling, sparking)
   fx = new Flame(leds, 12, 15, 2);
+//  fx = new RGB_step(leds, 100, 255); 
 
 
 }
