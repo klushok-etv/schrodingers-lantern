@@ -22,7 +22,9 @@ public:
     void fillSolid(CRGB);
     virtual void setColors(CRGB*, uint8_t);
     virtual void setColorPalette(CRGBPalette16);
-    void setBrightness(uint8_t brightness);
+    void setBrightness(uint8_t);
+    void setDelay(uint32_t);
+    void setFPS(uint32_t);
 };
  
 #endif

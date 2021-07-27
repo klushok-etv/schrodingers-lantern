@@ -16,7 +16,9 @@ public:
     RGB_step(CRGB*, uint32_t);
     ~RGB_step(){};
     void effectStep();
-    void setColors(CRGB*, uint8_t); // ptr to color array, length of array
+
+    // ptr to color array, length of array
+    void setColors(CRGB*, uint8_t); 
 };
 
 #endif

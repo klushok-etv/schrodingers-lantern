@@ -34,3 +34,11 @@ void Effect::setColorPalette(CRGBPalette16 )
 {
     Serial.println("WARNING - setColorPalette() must be implemented by derived effect classes!");
 }
+
+void Effect::setDelay(uint32_t delay){
+    this->_delay = delay;
+}
+
+void Effect::setFPS(uint32_t fps){
+    this->setDelay(1000/fps);
+}
