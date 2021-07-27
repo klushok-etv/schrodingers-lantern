@@ -8,7 +8,7 @@ var interval = setInterval(function() {
 }, 5000);
 
 // specifies if info should be updated after previous connection loss
-let updateInfoFlag = false; 
+let updateInfoFlag = false;
 
 window.onload = async function() {
     const brightnessEl = document.getElementById("brightness")
@@ -17,7 +17,7 @@ window.onload = async function() {
     brightnessEl.oninput = function(event) {
         const span = document.getElementById("brightness_percentage");
         let newVal = event.target.value;
-        span.innerText = parseInt(newVal/2.55);
+        span.innerText = parseInt(newVal / 2.55);
     }
 
     // send updates when slider is released
@@ -25,7 +25,7 @@ window.onload = async function() {
         // todo validation
         brightness = event.target.value;
         ajaxGet(`/api/set?brightness=${brightness}`)
-        // setRGB();
+            // setRGB();
     }, false);
 
     // make request to obtain color and brightness
@@ -59,16 +59,16 @@ async function updateInfo() {
 function updateBrightness(response) {
     brightness = response.brightness;
     document.getElementById("brightness").value = brightness;
-    document.getElementById("brightness_percentage").innerHTML = parseInt(brightness/2.55);
+    document.getElementById("brightness_percentage").innerHTML = parseInt(brightness / 2.55);
 
 }
 
 function updateColor(response) {
     // parse received current color
     color_arr = response.rgb; // this is a 
-    color.r = parseInt(color_arr[0]);// / (brightness / 100));
-    color.g = parseInt(color_arr[1]);// / (brightness / 100));
-    color.b = parseInt(color_arr[2]);// / (brightness / 100));
+    color.r = parseInt(color_arr[0]); // / (brightness / 100));
+    color.g = parseInt(color_arr[1]); // / (brightness / 100));
+    color.b = parseInt(color_arr[2]); // / (brightness / 100));
 
     // set current value to colorPicker input
     document.getElementById("solidColor").value = rgbToHex(
@@ -122,10 +122,10 @@ function updateRSSI(failed = false, response) {
 function setRGB() {
     // todo validate input
     console.log(color)
-    // const i = brightness / 100
-    const red = parseInt(color.r);// * i);
-    const green = parseInt(color.g);// * i);
-    const blue = parseInt(color.b);// * i);
+        // const i = brightness / 100
+    const red = parseInt(color.r); // * i);
+    const green = parseInt(color.g); // * i);
+    const blue = parseInt(color.b); // * i);
 
     ajaxGet(`/api/set?red=${red}&green=${green}&blue=${blue}`);
 }
@@ -133,6 +133,27 @@ function setRGB() {
 function setState(newState) {
     ajaxGet(`/api/toggle?state=${newState}`);
 }
+
+function toggleEffect(btn, id) {
+    const btns = document.getElementsByClassName("effectBtn");
+    
+    let newstate;
+    if (btn.classList.contains("active")) {
+        for (i = 0; i < btns.length; i++) {
+            btns[i].classList.remove("active");
+        }
+        newstate = 0;
+    } else {
+        for (i = 0; i < btns.length; i++) {
+            btns[i].classList.remove("active");
+        }
+        btn.classList.add("active");
+        newstate = 1;
+    }
+
+    ajaxGet(`/api/effect?id=${id}&state=${newstate}`);
+}
+
 
 function ajaxGet(url) {
     return new Promise(function(resolve, reject) {

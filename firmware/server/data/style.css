@@ -1,3 +1,8 @@
+:root {
+    --primary-color: #337ab3;
+    --active-color: #04AA6D;
+}
+
 html {
     font-family: Helvetica;
     display: inline-block;
@@ -28,7 +33,7 @@ html {
 }
 
 h1 {
-    color: #0F3376;
+    color: var(--primary-color);
     padding: 2vh;
 }
 
@@ -38,7 +43,8 @@ p {
 
 .button {
     display: inline-block;
-    background-color: #008CBA;
+    /* background-color: #008CBA; */
+    background-color: var(--primary-color);
     border: none;
     border-radius: 4px;
     color: white;
@@ -146,6 +152,38 @@ input[type="color"]::-webkit-color-swatch {
     margin-left: 20px;
 }
 
+.effectBtnContainer {
+    padding-top: 20px;
+}
+
+.effectBtn {
+    text-decoration: none;
+    color: var(--primary-color);
+    display: inline-block;
+    padding: 4px;
+    border-radius: 5px;
+    line-height: 1.42857143;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    width: 150px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 13pt;
+    transition: 0.2s;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .effectBtn:hover {
+        color: white;
+        background-color: var(--primary-color);
+    }
+}
+
+.effectBtn.active {
+    color: white;
+    background-color: var(--active-color);
+}
+
 @media screen and (max-width:1000px) {
     .logo {
         position: relative;
@@ -154,5 +192,13 @@ input[type="color"]::-webkit-color-swatch {
     .logo:hover {
         position: relative;
         width: 100%;
+    }
+    .effectBtn {
+        width: 30%;
+        max-width: 150px;
+        font-size: 16pt;
+    }
+    .effectBtnContainer {
+        padding-top: 40px;
     }
 }

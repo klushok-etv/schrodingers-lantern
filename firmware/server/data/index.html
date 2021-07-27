@@ -13,7 +13,6 @@
 
 <body>
     <div class="logo"></div>
-
     <div class="container">
         <h1>Schrodingers lantern</h1>
         <div class="statusContainer">
@@ -30,17 +29,18 @@
                             d="m51.677 26.496a4.075 4.075 0 0 1 2.8662-1.1783 4.075 4.075 0 0 1 2.8841 1.1962" />
                     </g>
                     <path class="bar weak"
-                    d="m52.839 27.596 1.7255 1.7255 1.7005-1.7005a2.4361 2.4361 0 0 0-1.7262-0.71798 2.4361 2.4361 0 0 0-1.6998 0.69298z"
+                        d="m52.839 27.596 1.7255 1.7255 1.7005-1.7005a2.4361 2.4361 0 0 0-1.7262-0.71798 2.4361 2.4361 0 0 0-1.6998 0.69298z"
                         fill="#808080" />
                 </g>
                 <g id="wifiCross" fill="#f00" stroke="#f00" stroke-width="1px">
-                <path d="m3.6343 0.9578c2.0016 2.0016 4.0016 4.0016 6 6"/>
-                <path d="m9.6342 0.9578c-2 2-4 4-6 6"/>
-               </g>
+                    <path d="m3.6343 0.9578c2.0016 2.0016 4.0016 4.0016 6 6" />
+                    <path d="m9.6342 0.9578c-2 2-4 4-6 6" />
+                </g>
             </svg>
         </div>
     </div>
-    <p><button class="button" onclick="setState(1)">ON</button>
+    <p>
+        <button class="button" onclick="setState(1)">ON</button>
         <button class="button button2" onclick="setState(0)">OFF</button>
     </p>
     <div class="colorBox inputContainer">
@@ -51,8 +51,54 @@
         <input type="range" class="slider" id="brightness" name="brightness" min="0" max="255" value="0">
         <p class="label" for="brightness">brightness: <span id="brightness_percentage">0</span>%</p>
     </div>
-
+    <div class="effectBtnContainer">
+        <div class="effectBtn" onclick="toggleEffect(this, 0)">
+            <svg width="100%" version="1.1" viewBox="-3 -3 140 140" xmlns="http://www.w3.org/2000/svg">
+                <path stroke='currentcolor'
+                    d="m14.339 30.092c18.586-24.745 57.063-31.945 84.453-14.915 27.046 16.816 36.994 49.147 25.916 79.483-10.46 28.644-38.02 39.993-57.884 25.584-7.441-5.3975-10.326-12.163-11.72-23.154l-0.66638-6.2432-0.28662-2.5116c-0.77387-5.9027-1.9657-8.5473-4.4509-9.9325-3.3847-1.8866-5.6382-1.9306-10.083-0.2078l-2.2189 0.92004-1.1298 0.4925c-6.4066 2.7824-10.668 3.7599-16.059 2.6304l-1.2659-0.29832-1.0342-0.2945c-17.625-5.4613-20.235-29.367-3.572-51.553z"
+                    fill="none"  stroke-width="10" />
+                <g stroke='none' fill='currentcolor'>
+                    <ellipse cx="74.508" cy="25.624" rx="8.4206" ry="8.5234" />
+                    <ellipse cx="93.537" cy="39.145" rx="8.4206" ry="8.5234" />
+                    <ellipse cx="105.06" cy="60.011" rx="8.4206" ry="8.5234" />
+                    <ellipse cx="103.89" cy="83.214" rx="8.4206" ry="8.5234" />
+                    <ellipse cx="90.199" cy="104.41" rx="8.4206" ry="8.5234" />
+                </g>
+            </svg>
+            RGB Step
+        </div>
+        <div class="effectBtn" onclick="toggleEffect(this, 1)">
+            <svg width="100%" version="1.1" viewBox="0 0 500 500" xml:space="preserve"
+                xmlns="http://www.w3.org/2000/svg">
+                <path fill='currentcolor'
+                    d="m176.82 498.2c4.8616 2.5845 9.99-3.0123 7.0135-7.6446-16.156-25.145-31.455-67.457-7.0802-121.95 40.648-90.87 65.382-137.94 65.382-137.94s13.156 54.924 48.819 103.76c34.323 47 53.11 106.11 22.823 155.35-2.8423 4.6217 2.1698 10.075 6.9997 7.6031 37.491-19.178 79.541-57.647 84.286-134.2 1.7493-23.392-0.87424-56.142-13.993-97.469-16.868-52.378-37.604-76.819-49.602-87.315-3.5889-3.14-9.1702-0.35702-8.8758 4.4021 3.4962 56.516-17.766 70.858-29.868 38.537-4.8332-12.91-7.6519-35.238-7.6519-62.43 0-45.27-13.134-91.871-42.09-129.74-7.5299-9.8477-16.341-19.05-26.449-26.897-3.6596-2.8415-8.9645 0.014639-8.6294 4.6355 2.2234 30.689 0.20901 118.64-76.953 223.72-69.963 97.469-42.853 172.33-33.233 192.6 18.393 38.84 44.047 61.649 69.102 74.971z"
+                    stroke-width="1" />
+            </svg>
+            Flame
+        </div>
+        <div class="effectBtn" onclick="toggleEffect(this, 2)">
+            <svg width="100%" version="1.1" viewBox="0 0 132.29 132.29" xmlns="http://www.w3.org/2000/svg">
+                <g fill="none" stroke="currentcolor">
+                    <ellipse cx="66.146" cy="72.551" rx="47.475" ry="47.475" stroke-width="10" />
+                    <ellipse cx="66.146" cy="72.551" rx="17.33" ry="45.282" stroke-width="6" />
+                    <ellipse transform="rotate(90)" cx="72.551" cy="-66.146" rx="17.33" ry="45.282" stroke-width="6" />
+                    <g stroke-linecap="round" stroke-width="6">
+                        <path d="m66.146 25v-20" />
+                        <path d="m23.866 9.3291c3.3336 3.3336 6.6669 6.6669 10 10" />
+                        <path d="m33.866 9.3291c-3.3333 3.3333-6.6667 6.6667-10 10" />
+                        <path d="m116.45 32.588c3.3336 3.3336 6.6669 6.6669 10 10" />
+                        <path d="m126.45 32.588c-3.3333 3.3333-6.6667 6.6667-10 10" />
+                        <path d="m7.3163 115.78c3.3336 3.3336 6.6669 6.6669 10 10" />
+                        <path d="m17.316 115.78c-3.3333 3.3333-6.6667 6.6667-10 10" />
+                        <path d="m112.21 107.73 10 10" />
+                        <path d="m122.21 107.73-10 10" />
+                    </g>
+                </g>
+            </svg>
+            Disco
+        </div>
     </div>
+
 </body>
 
 </html>
