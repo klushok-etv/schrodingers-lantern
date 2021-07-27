@@ -17,11 +17,12 @@ void setup() {
   // put your setup code here, to run once:
   FastLED.addLeds<WS2813, DATA_PIN, GRB>(leds, NUM_LEDS);
 
-  //Flame(*leds, fps, brightness, cooling, sparking)
-  fx = new Flame(leds, 10, 50, 20, 7);
+  //Flame(*leds, fps, cooling, sparking)
+  fx = new Flame(leds, 10, 20, 7);
+  FastLED.setBrightness(50);
 
-  // RGB_step(*leds, stepTime, intensity)
-  //    fx = new RGB_step(leds, 1000, 100);
+  // RGB_step(*leds, stepTime)
+  //    fx = new RGB_step(leds, 1000);
 
   t_start = millis();
 
@@ -32,11 +33,11 @@ void loop() {
   fx->run();
   if (millis() - t_start > 15000 && toggle) {
     delete fx;
-    fx = new RGB_step(leds, 1000, 100);
+    fx = new RGB_step(leds, 1000);
     toggle = false;
   }
   else if (millis() - t_start > 10000) {
-    fx->setBrightness(255);
+    FastLED.setBrightness(255);
   }
   else if (millis() - t_start > 5000) {
     //    fx->setColors(c2,5);

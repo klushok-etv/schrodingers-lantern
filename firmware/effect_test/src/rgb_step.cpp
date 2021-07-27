@@ -1,7 +1,7 @@
 #include "RGB_step.h"
 
-RGB_step::RGB_step(CRGB *leds, uint32_t delay, uint8_t brightness)
-    : Effect(leds, delay, brightness)
+RGB_step::RGB_step(CRGB *leds, uint32_t delay)
+    : Effect(leds, delay)
 {
     this->_colors = this->_defaultColors;
     this->_colorLength = 3;

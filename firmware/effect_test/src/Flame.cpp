@@ -1,7 +1,7 @@
 #include "Flame.h"
 
-Flame::Flame(CRGB *leds, uint32_t fps, uint8_t brightness ,uint8_t cooling, uint8_t sparking)
-    : Effect(leds, 1000 / fps, brightness)
+Flame::Flame(CRGB *leds, uint32_t fps ,uint8_t cooling, uint8_t sparking)
+    : Effect(leds, 1000 / fps)
 {
     this->_cooling = cooling;
     this->_sparking = sparking;
@@ -58,7 +58,7 @@ void Flame::effectStep()
     FastLED.show();
 }
 
-void Flame::setColors(CRGBPalette16 palette)
+void Flame::setColorPalette(CRGBPalette16 palette)
 {
     this->_gPal = palette;
 }

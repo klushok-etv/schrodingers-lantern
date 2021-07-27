@@ -13,10 +13,10 @@ private:
     byte heat[NUM_LEDS];
 
 public:
-    Flame(CRGB*, uint32_t, uint8_t, uint8_t, uint8_t);
+    Flame(CRGB*, uint32_t, uint8_t, uint8_t);
     ~Flame(){};
     void effectStep();
-    void setColors(CRGBPalette16);
+    void setColorPalette(CRGBPalette16);
 };
 
 #endif

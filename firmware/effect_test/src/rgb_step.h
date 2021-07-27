@@ -13,10 +13,10 @@ private:
     uint8_t _colorLength = 3;
 
 public:
-    RGB_step(CRGB*, uint32_t, uint8_t);
+    RGB_step(CRGB*, uint32_t);
     ~RGB_step(){};
     void effectStep();
-    void setColors(CRGB*, uint8_t);
+    void setColors(CRGB*, uint8_t); // ptr to color array, length of array
 };
 
 #endif

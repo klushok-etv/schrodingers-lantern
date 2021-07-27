@@ -1,10 +1,9 @@
 #include "Effect.h"
 
-Effect::Effect(CRGB *leds, uint32_t delay, uint8_t brightness)
+Effect::Effect(CRGB *leds, uint32_t delay)
 {
     this->_leds = leds;
     this->_delay = delay;
-    this->_brightness = brightness;
 }
 
 void Effect::fillSolid(CRGB color)
@@ -23,7 +22,6 @@ void Effect::run()
         return;
     this->_prev_t = millis();
 
-    FastLED.setBrightness(this->_brightness);
     this->effectStep();
 }
 
@@ -34,9 +32,5 @@ void Effect::setColors(CRGB *, uint8_t)
 
 void Effect::setColorPalette(CRGBPalette16 )
 {
-    Serial.println("WARNING - setColors() must be implemented by derived effect classes!");
-}
-
-void Effect::setBrightness(uint8_t brightness){
-    this->_brightness = brightness;
+    Serial.println("WARNING - setColorPalette() must be implemented by derived effect classes!");
 }
