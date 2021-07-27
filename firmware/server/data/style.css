@@ -168,7 +168,7 @@ input[type="color"]::-webkit-color-swatch {
     width: 150px;
     text-align: center;
     cursor: pointer;
-    font-size: 13pt;
+    font-size: 16pt;
     transition: 0.2s;
 }
 
@@ -196,7 +196,6 @@ input[type="color"]::-webkit-color-swatch {
     .effectBtn {
         width: 30%;
         max-width: 150px;
-        font-size: 16pt;
     }
     .effectBtnContainer {
         padding-top: 40px;

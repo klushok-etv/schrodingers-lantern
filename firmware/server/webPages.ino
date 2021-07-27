@@ -64,7 +64,7 @@ void setupWebPages() {
       message = "{\"status\": \"OK\"}";
       status = 200;
       updated = true;
-      fxState=false;
+      fxState = false;
       turnOn(); // set color
     }
 
@@ -75,7 +75,7 @@ void setupWebPages() {
 
   // api effect endpoint
   server.on("/api/effect", HTTP_GET, [](AsyncWebServerRequest * request) {
-    String message = "{\"status\": \"ERROR\", \"message\":\"missing parameters\"}";
+    String message = "{\"status\": \"ERROR\", \"message\":\"missing/invalid parameters\"}";
     uint16_t status = 400;
     bool updated = false;
 
@@ -85,11 +85,13 @@ void setupWebPages() {
         fxIndex = id;
         fxState = request->getParam("state")->value().toInt();
         if (fxState) state = true;
+        else if (state) turnOn();
         else turnOff();
+        message = "{\"status\":\"OK\"";
+        status = 200;
+        updated = true;
       }
-      message = "{\"status\":\"OK\"";
-      status = 200;
-      updated = true;
+
     }
     request->send(status, "application/json", message);
     if (updated) saveParam(); // save parameters to SPIFFS
@@ -102,14 +104,9 @@ void setupWebPages() {
     String message = "{\"status\": \"ERROR\", \"message\":\"missing parameters\"}";
     uint16_t status = 400;
     if (request->hasParam("state")) {
-      if (request->getParam("state")->value().toInt() == 1) {
-        turnOn();
-        message = "{\"status\":\"OK\"";
-      }
-      else {
-        turnOff();
-        message = "{\"status\":\"OK\"";
-      }
+      if (request->getParam("state")->value().toInt() == 1) turnOn();
+      else turnOff();
+      message = "{\"status\":\"OK\"";
       status = 200;
     }
     request->send(status, "application/json", message);
@@ -130,10 +127,6 @@ void setupWebPages() {
     json_rgb.add(rgb[2]);
     doc["fxState"] = fxState;
     doc["fxIndex"] = fxIndex;
-    //
-    //    // jsonBuffer["ssid"] = WiFi.SSID();
-    //    // jsonBuffer["localIP"] = WiFi.localIP();
-    //    // jsonBuffer["hostName"] = WiFi.getHostname();
     serializeJson(doc, *response);
     request->send(response);
   });

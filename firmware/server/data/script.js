@@ -53,6 +53,7 @@ async function updateInfo() {
         // update brightness and color
         updateBrightness(response);
         updateColor(response);
+        updateEffects(response);
         updateInfoFlag = false;
     }
 }
@@ -120,7 +121,10 @@ function updateRSSI(failed = false, response) {
 }
 
 function updateEffects(response){
+    setEffectsInactive();
+    console.log("fx state",response.fxState)
     if(response.fxState){
+        console.log("enabling effect")
         const effectEl = document.getElementById(`effect-${response.fxIndex}`);
         if(effectEl) effectEl.classList.add("active");
         else console.log("Something went wrong whilst updating the effects", effectEl, resonse);
@@ -143,24 +147,25 @@ function setState(newState) {
     ajaxGet(`/api/toggle?state=${newState}`);
 }
 
-function toggleEffect(btn, id) {
-    const btns = document.getElementsByClassName("effectBtn");
-    
+function toggleEffect(btn, id) {  
     let newstate;
     if (btn.classList.contains("active")) {
-        for (i = 0; i < btns.length; i++) {
-            btns[i].classList.remove("active");
-        }
+        setEffectsInactive();
         newstate = 0;
     } else {
-        for (i = 0; i < btns.length; i++) {
-            btns[i].classList.remove("active");
-        }
+        setEffectsInactive()
         btn.classList.add("active");
         newstate = 1;
     }
 
     ajaxGet(`/api/effect?id=${id}&state=${newstate}`);
+}
+
+function setEffectsInactive(){
+    const btns = document.getElementsByClassName("effectBtn");
+    for (i = 0; i < btns.length; i++) {
+        btns[i].classList.remove("active");
+    }
 }
 
 
