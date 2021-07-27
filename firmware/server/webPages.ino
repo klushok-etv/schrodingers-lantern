@@ -64,6 +64,7 @@ void setupWebPages() {
       message = "{\"status\": \"OK\"}";
       status = 200;
       updated = true;
+      fxState=false;
       turnOn(); // set color
     }
 

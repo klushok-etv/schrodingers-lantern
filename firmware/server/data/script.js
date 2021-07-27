@@ -36,6 +36,7 @@ window.onload = async function() {
     updateBrightness(response);
     updateColor(response);
     updateRSSI(false, response);
+    updateEffects(response);
 
     // set status text
     document.getElementById("statusField").innerText = response.status;
@@ -116,6 +117,14 @@ function updateRSSI(failed = false, response) {
         bars[i].classList.remove("connected");
     }
 
+}
+
+function updateEffects(response){
+    if(response.fxState){
+        const effectEl = document.getElementById(`effect-${response.fxIndex}`);
+        if(effectEl) effectEl.classList.add("active");
+        else console.log("Something went wrong whilst updating the effects", effectEl, resonse);
+    }
 }
 
 
