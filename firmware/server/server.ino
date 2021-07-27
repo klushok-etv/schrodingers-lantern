@@ -60,7 +60,7 @@ AsyncWebServer server(80);
 
 #define PAR_FILE "/par.dat"
 uint8_t rgb[] = {163, 0, 0}; // default color
-uint8_t intensity = 100;     // only saved to be able to return this value to the web UI, color intensity calculated client side
+uint8_t brightness = 255;
 
 // todo make lantern animation with redirect button to home
 void notFound(AsyncWebServerRequest *request)
@@ -124,10 +124,13 @@ void setup()
   char params[5];
   getParam(params);
   rgb[0] = params[0]; rgb[1] = params[1]; rgb[2] = params[2];
-  intensity = params[3];
+  brightness = params[3];
 
   // indicate succesfull boot
   blinkLantern(2, 500, bootColor);
+
+  // set brightness according to SPIFFS parameter
+  FastLED.setBrightness(brightness);
 }
 
 void setupOTA()

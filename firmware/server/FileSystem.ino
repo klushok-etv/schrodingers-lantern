@@ -37,7 +37,7 @@ void getParam(char* p) {
   if (!file || file.isDirectory())
   {
     Serial.println("ERROR: failed to open file for reading");
-    p[0] = rgb[0]; p[1] = rgb[1]; p[2] = rgb[2]; p[3] = intensity;
+    p[0] = rgb[0]; p[1] = rgb[1]; p[2] = rgb[2]; p[3] = brightness;
     return;
   }
   uint8_t i = 0;
@@ -60,7 +60,7 @@ void saveParam() {
     file.write(rgb[0]) &&
     file.write(rgb[1]) &&
     file.write(rgb[2]) &&
-    file.write(intensity)
+    file.write(brightness)
   ) Serial.println("- file written");
   else Serial.println("- write failed");
   file.close();

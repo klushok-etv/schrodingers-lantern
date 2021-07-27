@@ -36,27 +36,58 @@ void setupWebPages() {
     request->send(SPIFFS, "/klushok.svg");
   });
 
+
   // api set endpoint
   server.on("/api/set", HTTP_GET, [](AsyncWebServerRequest * request) {
-    String message;
+    String message = "{\"status\": \"ERROR\", \"message\":\"missing parameters\"}";
+    uint16_t status = 400;
+    bool updated = false;
+
+    // check if brightness was set
+    if ( request->hasParam("brightness")) {
+      brightness = request->getParam("brightness")->value().toInt();
+      FastLED.setBrightness(brightness); // set brightness
+      Serial.println(brightness);
+      turnOn(); // set color
+      message = "{\"status\": \"OK\"}";
+      status = 200;
+      updated = true;
+    }
+
+    // check if colors were set
     if ( request->hasParam("red") &&
          request->hasParam("green") &&
-         request->hasParam("blue") &&
-         request->hasParam("intensity")) {
+         request->hasParam("blue")) {
 
       rgb[0] = request->getParam("red")->value().toInt();
       rgb[1] = request->getParam("green")->value().toInt();
       rgb[2] = request->getParam("blue")->value().toInt();
-      intensity = request->getParam("intensity")->value().toInt();
-
       message = "{\"status\": \"OK\"}";
-    } else {
-      message = "{\"status\": \"ERROR\", \"message\":\"missing parameters\"}";
+      status = 200;
+      updated = true;
+      turnOn(); // set color
     }
-    request->send(200, "application/json", message);
-    turnOn(); // set color
-    saveParam(); // save parameters to SPIFFS
+
+    request->send(status, "application/json", message);
+    if (updated) saveParam(); // save parameters to SPIFFS
   });
+
+
+  //  // api brightness endpoint
+  //  server.on("/api/brightness", HTTP_GET, [](AsyncWebServerRequest * request) {
+  //    String message = "{\"status\": \"ERROR\", \"message\":\"missing parameters\"}";
+  //
+  //    if ( request->hasParam("value")) {
+  //      brightness = request->getParam("value")->value().toInt();
+  //      message = "{\"status\": \"OK\"}";
+  //
+  //      FastLED.setBrightness(brightness); // set brightness
+  //    }
+  //    request->send(200, "application/json", message);
+  //    saveParam(); // save parameters to SPIFFS
+  //  });
+
+
 
   // api toggle endpoint
   server.on("/api/toggle", HTTP_GET, [](AsyncWebServerRequest * request) {
@@ -79,11 +110,12 @@ void setupWebPages() {
     request->send(200, "application/json", message);
   });
 
+
   // api get info endpoint
   server.on("/api/status", HTTP_GET, [](AsyncWebServerRequest * request) {
     AsyncResponseStream *response = request->beginResponseStream("application/json");
     StaticJsonDocument<256> doc;
-    doc["intensity"] = intensity;
+    doc["brightness"] = brightness;
     doc["state"] = state ? "on" : "off";
     doc["status"] = "OK";
     doc["RSSI"] = WiFi.RSSI();
@@ -98,6 +130,7 @@ void setupWebPages() {
     serializeJson(doc, *response);
     request->send(response);
   });
+
 
   // reset wifi credentials
   server.on("/reset", HTTP_GET, [](AsyncWebServerRequest * request) {

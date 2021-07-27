@@ -1,11 +1,14 @@
 let color = { r: 180, b: 31, g: 33 };
-let intensity = 100;
+let brightness = 255;
 let RSSI = -90
+
+// set update interval
 var interval = setInterval(function() {
     updateInfo();
 }, 5000);
-let updateInfoFlag = false; // specifies if info should be updated after previous connection loss
 
+// specifies if info should be updated after previous connection loss
+let updateInfoFlag = false; 
 
 window.onload = async function() {
     const brightnessEl = document.getElementById("brightness")
@@ -13,18 +16,19 @@ window.onload = async function() {
     // slider percentage update
     brightnessEl.oninput = function(event) {
         const span = document.getElementById("brightness_percentage");
-        let newVal = event.target.value
-        span.innerText = parseInt(newVal);
+        let newVal = event.target.value;
+        span.innerText = parseInt(newVal/2.55);
     }
 
     // send updates when slider is released
     brightnessEl.addEventListener('change', function(event) {
         // todo validation
-        intensity = event.target.value;
-        setRGB();
+        brightness = event.target.value;
+        ajaxGet(`/api/set?brightness=${brightness}`)
+        // setRGB();
     }, false);
 
-    // make request to obtain color and intensity
+    // make request to obtain color and brightness
     const colorPicker = document.getElementById("solidColor");
     colorPicker.addEventListener("change", watchColorPicker, false);
     let response = JSON.parse(await ajaxGet(`/api/status`));
@@ -53,18 +57,18 @@ async function updateInfo() {
 }
 
 function updateBrightness(response) {
-    intensity = response.intensity;
-    document.getElementById("brightness").value = intensity;
-    document.getElementById("brightness_percentage").innerHTML = intensity;
+    brightness = response.brightness;
+    document.getElementById("brightness").value = brightness;
+    document.getElementById("brightness_percentage").innerHTML = parseInt(brightness/2.55);
 
 }
 
 function updateColor(response) {
     // parse received current color
     color_arr = response.rgb; // this is a 
-    color.r = parseInt(color_arr[0] / (intensity / 100));
-    color.g = parseInt(color_arr[1] / (intensity / 100));
-    color.b = parseInt(color_arr[2] / (intensity / 100));
+    color.r = parseInt(color_arr[0]);// / (brightness / 100));
+    color.g = parseInt(color_arr[1]);// / (brightness / 100));
+    color.b = parseInt(color_arr[2]);// / (brightness / 100));
 
     // set current value to colorPicker input
     document.getElementById("solidColor").value = rgbToHex(
@@ -118,12 +122,12 @@ function updateRSSI(failed = false, response) {
 function setRGB() {
     // todo validate input
     console.log(color)
-    const i = intensity / 100
-    const red = parseInt(color.r * i);
-    const green = parseInt(color.g * i);
-    const blue = parseInt(color.b * i);
+    // const i = brightness / 100
+    const red = parseInt(color.r);// * i);
+    const green = parseInt(color.g);// * i);
+    const blue = parseInt(color.b);// * i);
 
-    ajaxGet(`/api/set?state=1&red=${red}&green=${green}&blue=${blue}&intensity=${intensity}`);
+    ajaxGet(`/api/set?red=${red}&green=${green}&blue=${blue}`);
 }
 
 function setState(newState) {
