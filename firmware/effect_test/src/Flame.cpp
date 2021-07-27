@@ -5,12 +5,7 @@ Flame::Flame(CRGB *leds, uint32_t fps, uint8_t brightness ,uint8_t cooling, uint
 {
     this->_cooling = cooling;
     this->_sparking = sparking;
-    gPal = CRGBPalette16(CRGB::Black, CRGB::Red, CRGB::Yellow);
-    // gPal = CRGBPalette16(CRGB::Black, CRGB::Purple, CRGB::Pink);
-}
-
-Flame::~Flame()
-{
+    this->_gPal = CRGBPalette16(CRGB::Black, CRGB::Red, CRGB::Yellow);
 }
 
 // Based on the fastled example Fire2012WithPalette
@@ -54,11 +49,16 @@ void Flame::effectStep()
         // Scale the heat value from 0-255 down to 0-240
         // for best results with color palettes.
         byte colorindex = scale8(heat[j], 240);
-        CRGB color = ColorFromPalette(gPal, colorindex);
+        CRGB color = ColorFromPalette(this->_gPal, colorindex);
         int pixelnumber;
         // if (gReverseDirection) -> default reversed
         pixelnumber = (NUM_LEDS - 1) - j;
         this->_leds[pixelnumber] = color;
     }
     FastLED.show();
+}
+
+void Flame::setColors(CRGBPalette16 palette)
+{
+    this->_gPal = palette;
 }

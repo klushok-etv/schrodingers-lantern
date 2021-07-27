@@ -21,6 +21,9 @@ public:
     virtual void effectStep()=0; // run effect frame
     ~Effect(){};
     void fillSolid(CRGB);
+    virtual void setColors(CRGB*, uint8_t);
+    virtual void setColorPalette(CRGBPalette16);
+    void setBrightness(uint8_t brightness);
 };
  
 #endif

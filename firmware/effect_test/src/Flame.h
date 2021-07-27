@@ -9,13 +9,14 @@ private:
     const uint8_t _layer_size = 6;
     uint8_t _cooling;
     uint8_t _sparking;
-    CRGBPalette16 gPal;
+    CRGBPalette16 _gPal;
     byte heat[NUM_LEDS];
 
 public:
     Flame(CRGB*, uint32_t, uint8_t, uint8_t, uint8_t);
-    ~Flame();
+    ~Flame(){};
     void effectStep();
+    void setColors(CRGBPalette16);
 };
 
 #endif

@@ -6,6 +6,10 @@
 CRGB leds[NUM_LEDS];
 
 Effect* fx;
+CRGB c2[5] = {CRGB::Pink, CRGB::Orange, CRGB::Purple, CRGB::Blue, CRGB::Yellow};
+
+bool toggle = true;
+unsigned long t_start;
 
 void setup() {
   Serial.begin(115200);
@@ -14,16 +18,30 @@ void setup() {
   FastLED.addLeds<WS2813, DATA_PIN, GRB>(leds, NUM_LEDS);
 
   //Flame(*leds, fps, brightness, cooling, sparking)
-  fx = new Flame(leds, 10, 100, 20, 7);
+  fx = new Flame(leds, 10, 50, 20, 7);
 
   // RGB_step(*leds, stepTime, intensity)
-  //  fx = new RGB_step(leds, 1000, 10);
+  //    fx = new RGB_step(leds, 1000, 100);
 
+  t_start = millis();
 
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
   fx->run();
+  if (millis() - t_start > 15000 && toggle) {
+    delete fx;
+    fx = new RGB_step(leds, 1000, 100);
+    toggle = false;
+  }
+  else if (millis() - t_start > 10000) {
+    fx->setBrightness(255);
+  }
+  else if (millis() - t_start > 5000) {
+    //    fx->setColors(c2,5);
+    fx->setColorPalette(CRGBPalette16(CRGB::Black, CRGB::Purple, CRGB::Pink));
+  }
+
 
 }

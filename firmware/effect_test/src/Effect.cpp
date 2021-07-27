@@ -26,3 +26,17 @@ void Effect::run()
     FastLED.setBrightness(this->_brightness);
     this->effectStep();
 }
+
+void Effect::setColors(CRGB *, uint8_t)
+{
+    Serial.println("WARNING - setColors() must be implemented by derived effect classes!");
+}
+
+void Effect::setColorPalette(CRGBPalette16 )
+{
+    Serial.println("WARNING - setColors() must be implemented by derived effect classes!");
+}
+
+void Effect::setBrightness(uint8_t brightness){
+    this->_brightness = brightness;
+}
