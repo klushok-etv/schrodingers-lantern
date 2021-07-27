@@ -12,10 +12,12 @@ void setup() {
   Serial.println("started");
   // put your setup code here, to run once:
   FastLED.addLeds<WS2813, DATA_PIN, GRB>(leds, NUM_LEDS);
-  
-  //Flame(*leds, fps, cooling, sparking)
-  fx = new Flame(leds, 12, 15, 2);
-//  fx = new RGB_step(leds, 100, 255); 
+
+  //Flame(*leds, fps, brightness, cooling, sparking)
+  fx = new Flame(leds, 10, 100, 20, 7);
+
+  // RGB_step(*leds, stepTime, intensity)
+  //  fx = new RGB_step(leds, 1000, 10);
 
 
 }

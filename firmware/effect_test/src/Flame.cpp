@@ -1,15 +1,12 @@
-#include "Effect.h"
 #include "Flame.h"
-#include <stdint.h>
-#include <arduino.h>
-#include <FastLED.h>
 
-Flame::Flame(CRGB *leds, uint32_t fps, uint8_t cooling, uint8_t sparking)
-    : Effect(leds, 1000 / fps)
+Flame::Flame(CRGB *leds, uint32_t fps, uint8_t brightness ,uint8_t cooling, uint8_t sparking)
+    : Effect(leds, 1000 / fps, brightness)
 {
     this->_cooling = cooling;
     this->_sparking = sparking;
     gPal = CRGBPalette16(CRGB::Black, CRGB::Red, CRGB::Yellow);
+    // gPal = CRGBPalette16(CRGB::Black, CRGB::Purple, CRGB::Pink);
 }
 
 Flame::~Flame()
@@ -17,12 +14,8 @@ Flame::~Flame()
 }
 
 // Based on the fastled example Fire2012WithPalette
-void Flame::run()
+void Flame::effectStep()
 {
-    // only execute if specified delay has elapsed
-    if (millis() - _prev_t < this->_delay)
-        return;
-
     // Array of temperature readings at each simulation cell
     static byte heat[NUM_LEDS];
 
@@ -63,7 +56,7 @@ void Flame::run()
         byte colorindex = scale8(heat[j], 240);
         CRGB color = ColorFromPalette(gPal, colorindex);
         int pixelnumber;
-        // if (gReverseDirection)
+        // if (gReverseDirection) -> default reversed
         pixelnumber = (NUM_LEDS - 1) - j;
         this->_leds[pixelnumber] = color;
     }

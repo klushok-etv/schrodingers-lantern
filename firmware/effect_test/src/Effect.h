@@ -14,11 +14,13 @@ protected:
     uint32_t _delay;
     CRGB* _leds;
     unsigned long _prev_t = 0;
+    uint8_t _brightness;
 public:
-    Effect(CRGB*, uint32_t); // fps
-    virtual void run()=0; // run effect frame
+    Effect(CRGB*, uint32_t, uint8_t); // fps
+    void run();
+    virtual void effectStep()=0; // run effect frame
     ~Effect(){};
     void fillSolid(CRGB);
 };
-
+ 
 #endif
