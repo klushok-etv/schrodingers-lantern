@@ -35,6 +35,9 @@
 #include <FastLED.h>
 #include <WiFiUdp.h>
 #include <ArduinoOTA.h>
+#include "src/Flame.h"
+#include "src/RGB_step.h"
+#include "src/Disco.h"
 
 #ifndef CREDENTIALS_H
 #pragma error "!!!!!!!!"
@@ -58,9 +61,21 @@ CRGB leds[NUM_LEDS];
 // Define webserver on port 80
 AsyncWebServer server(80);
 
+// Define default values
 #define PAR_FILE "/par.dat"
 uint8_t rgb[] = {163, 0, 0}; // default color
 uint8_t brightness = 255;
+
+// Define effect pointer
+Effect* fx[] = {
+  new RGB_step(leds, 1000),
+  new Flame(leds, 10, 20, 7),
+  new Disco(leds, 200, 10)  
+};
+const uint8_t fxLength = 3;
+uint8_t fxIndex = 0;
+bool fxState = false;
+
 
 // todo make lantern animation with redirect button to home
 void notFound(AsyncWebServerRequest *request)
@@ -121,10 +136,12 @@ void setup()
   Serial.println(WiFi.status());
 
   // get saved parameters from SPIFFS
-  char params[5];
+  char params[6] = {0};
   getParam(params);
   rgb[0] = params[0]; rgb[1] = params[1]; rgb[2] = params[2];
   brightness = params[3];
+  fxState = params[4];
+  fxIndex = params[5];
 
   // indicate succesfull boot
   blinkLantern(2, 500, bootColor);
@@ -226,4 +243,5 @@ void loop()
   {
     prev_btn_state = curBtnState;
   }
+  if (fxState && state) fx[fxIndex]->run();
 }

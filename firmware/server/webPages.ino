@@ -47,7 +47,6 @@ void setupWebPages() {
     if ( request->hasParam("brightness")) {
       brightness = request->getParam("brightness")->value().toInt();
       FastLED.setBrightness(brightness); // set brightness
-      Serial.println(brightness);
       turnOn(); // set color
       message = "{\"status\": \"OK\"}";
       status = 200;
@@ -73,41 +72,46 @@ void setupWebPages() {
   });
 
 
-  //  // api brightness endpoint
-  //  server.on("/api/brightness", HTTP_GET, [](AsyncWebServerRequest * request) {
-  //    String message = "{\"status\": \"ERROR\", \"message\":\"missing parameters\"}";
-  //
-  //    if ( request->hasParam("value")) {
-  //      brightness = request->getParam("value")->value().toInt();
-  //      message = "{\"status\": \"OK\"}";
-  //
-  //      FastLED.setBrightness(brightness); // set brightness
-  //    }
-  //    request->send(200, "application/json", message);
-  //    saveParam(); // save parameters to SPIFFS
-  //  });
+  // api effect endpoint
+  server.on("/api/effect", HTTP_GET, [](AsyncWebServerRequest * request) {
+    String message = "{\"status\": \"ERROR\", \"message\":\"missing parameters\"}";
+    uint16_t status = 400;
+    bool updated = false;
+
+    if (request->hasParam("id") && request->hasParam("state")) {
+      uint8_t id = request->getParam("id")->value().toInt();
+      if (id < fxLength) {
+        fxIndex = id;
+        fxState = request->getParam("state")->value().toInt();
+        if (fxState) state = true;
+        else turnOff();
+      }
+      message = "{\"status\":\"OK\"";
+      status = 200;
+      updated = true;
+    }
+    request->send(status, "application/json", message);
+    if (updated) saveParam(); // save parameters to SPIFFS
+  });
 
 
 
   // api toggle endpoint
   server.on("/api/toggle", HTTP_GET, [](AsyncWebServerRequest * request) {
-    String message;
+    String message = "{\"status\": \"ERROR\", \"message\":\"missing parameters\"}";
+    uint16_t status = 400;
     if (request->hasParam("state")) {
       if (request->getParam("state")->value().toInt() == 1) {
         turnOn();
         message = "{\"status\":\"OK\"";
       }
-      else if (request->getParam("state")->value().toInt() == 0) {
+      else {
         turnOff();
         message = "{\"status\":\"OK\"";
       }
-      else {
-        message = "{\"status\":\"ERROR\", \"message\":\"Invalid parameter supplied\"";
-      }
-    } else {
-      message = "{\"status\": \"ERROR\", \"message\":\"missing parameters\"}";
+      status = 200;
     }
-    request->send(200, "application/json", message);
+    request->send(status, "application/json", message);
   });
 
 
@@ -123,6 +127,8 @@ void setupWebPages() {
     json_rgb.add(rgb[0]);
     json_rgb.add(rgb[1]);
     json_rgb.add(rgb[2]);
+    doc["fxState"] = fxState;
+    doc["fxIndex"] = fxIndex;
     //
     //    // jsonBuffer["ssid"] = WiFi.SSID();
     //    // jsonBuffer["localIP"] = WiFi.localIP();

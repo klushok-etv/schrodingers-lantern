@@ -13,7 +13,7 @@ bool state = false;
 
 Effect* arr[] = {new Flame(leds, 10, 20, 7), new Disco(leds, 200, 10), new RGB_step(leds, 1000)};
 uint8_t fxIndex = 0;
-Effect* fx;
+Effect* fx = new Effect();
 CRGB c2[5] = {CRGB::Pink, CRGB::Orange, CRGB::Purple, CRGB::Blue, CRGB::Yellow};
 
 bool toggle = true;
@@ -32,25 +32,25 @@ void setup() {
   //    fx = new RGB_step(leds, 1000);
 
   //  fx = new Disco(leds, 200, 10);
-  t_start = millis();
-  fx = arr[fxIndex];
+//  t_start = millis();
+//  fx = arr[fxIndex];
 
 }
 
 void loop() {
-  // check if btn has rising edge
-  bool curBtnState = digitalRead(BTN_PIN);
-  if (curBtnState && !prev_btn_state)
-  {
-    // toggle
-    prev_btn_state = curBtnState;
-    fxIndex = (fxIndex + 1) % 3;
-    fx = arr[fxIndex];
-  }
-  else
-  {
-    prev_btn_state = curBtnState;
-  }
+//  // check if btn has rising edge
+//  bool curBtnState = digitalRead(BTN_PIN);
+//  if (curBtnState && !prev_btn_state)
+//  {
+//    // toggle
+//    prev_btn_state = curBtnState;
+//    fxIndex = (fxIndex + 1) % 3;
+//    fx = arr[fxIndex];
+//  }
+//  else
+//  {
+//    prev_btn_state = curBtnState;
+//  }
 
   fx->run();
 

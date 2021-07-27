@@ -60,7 +60,9 @@ void saveParam() {
     file.write(rgb[0]) &&
     file.write(rgb[1]) &&
     file.write(rgb[2]) &&
-    file.write(brightness)
+    file.write(brightness) &&
+    file.write(fxState) &&
+    file.write(fxIndex)
   ) Serial.println("- file written");
   else Serial.println("- write failed");
   file.close();

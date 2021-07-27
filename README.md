@@ -55,3 +55,7 @@ The lantern is in AP mode, follow the [Connect to wifi](#Connect-to-wifi) steps.
 
 ### Installation
 To upload HTML and CSS files to the SPIFFS of the ESP32, follow these instructions [randomnerdtutorials.com/install-esp32-filesystem-uploader-arduino-ide/](https://randomnerdtutorials.com/install-esp32-filesystem-uploader-arduino-ide/)
+
+
+# Known points of improvement
+- rescanning for wifi networks requires a device reboot, this should be built into the wifi manager
