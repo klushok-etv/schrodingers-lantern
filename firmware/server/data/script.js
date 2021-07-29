@@ -22,10 +22,11 @@ window.onload = async function() {
 
     // send updates when slider is released
     brightnessEl.addEventListener('change', function(event) {
-        // todo validation
-        brightness = event.target.value;
-        ajaxGet(`/api/set?brightness=${brightness}`)
-            // setRGB();
+        var newVal = event.target.value;
+        if (newVal >= 0 && newVal <= 255) {
+            brightness = event.target.value;
+            ajaxGet(`/api/set?brightness=${brightness}`)
+        }
     }, false);
 
     // make request to obtain color and brightness
@@ -120,13 +121,13 @@ function updateRSSI(failed = false, response) {
 
 }
 
-function updateEffects(response){
+function updateEffects(response) {
     setEffectsInactive();
-    console.log("fx state",response.fxState)
-    if(response.fxState){
+    console.log("fx state", response.fxState)
+    if (response.fxState) {
         console.log("enabling effect")
         const effectEl = document.getElementById(`effect-${response.fxIndex}`);
-        if(effectEl) effectEl.classList.add("active");
+        if (effectEl) effectEl.classList.add("active");
         else console.log("Something went wrong whilst updating the effects", effectEl, resonse);
     }
 }
@@ -147,7 +148,7 @@ function setState(newState) {
     ajaxGet(`/api/toggle?state=${newState}`);
 }
 
-function toggleEffect(btn, id) {  
+function toggleEffect(btn, id) {
     let newstate;
     if (btn.classList.contains("active")) {
         setEffectsInactive();
@@ -161,7 +162,7 @@ function toggleEffect(btn, id) {
     ajaxGet(`/api/effect?id=${id}&state=${newstate}`);
 }
 
-function setEffectsInactive(){
+function setEffectsInactive() {
     const btns = document.getElementsByClassName("effectBtn");
     for (i = 0; i < btns.length; i++) {
         btns[i].classList.remove("active");

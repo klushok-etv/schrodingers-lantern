@@ -11,8 +11,14 @@ This lantern is a graduation present for our klushok committee member Werner.
 
 ## Concept
 ![concept drawing](image/assembly.png)
+The concept is based on the logo from Schrodingers Box: a mysterybox containing random projects and components created by Werner.
+The sides of the lantern contain a modified version of the logo behind which a filter is glued. 
+This filter diffuses the light from an LED string attached to a central cylinder.
+The lantern is connected to power via a micro usb connector in the bottom and controlled via an ESP32 hidden in the top.
+The lantern can be turned on or off via a capacitive sensor hidden just below the top center square, further control like setting colors and effects can be done via the user interface hosted by the ESP32 called the webUI.
 
-
+To ensure the rigidity of the lantern, the top is connected to the bottom via a m4 threaded rod down the center of the LED cylinder.
+The sides lock into place using printed tabs.
 
 ## Firmware
 
@@ -20,6 +26,9 @@ This lantern is a graduation present for our klushok committee member Werner.
  - async webserver
  - webinterface which makes requests to the esp server
  - api on the esp implements functionality
+
+ It is highly advised to test uploads on a separate esp32 board before uploading to the lantern.
+ The usb port and flash button are only accesible when the lantern is disassembled, any runtime errors which prevent the OTA upload handler to start will therefore completely block the lantern and require dissasembly to fix.
 
 ### SPIFFS
 There is a limit of 32 chars in total for filenames. One '\0' char is reserved for C string termination, so that leaves us with 31 usable characters.
