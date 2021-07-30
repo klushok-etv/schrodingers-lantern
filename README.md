@@ -21,11 +21,21 @@ To ensure the rigidity of the lantern, the top is connected to the bottom via a 
 The sides lock into place using printed tabs.
 
 ## Firmware
+The firmware of the lantern is the most challenging part because once the lantern in closed off, the ESP cannot be reached.
 
- - async wifi manager
- - async webserver
- - webinterface which makes requests to the esp server
- - api on the esp implements functionality
+The required funtionallity is:
+ - Over the Air (OTA) flashing/file upload
+ - A wifi manager to (re)connect to a network without requiring reflashing credentials
+ - A webinterface to control the lantern
+ - Physical button(s) to turn the lantern on/off
+ - An api to integrate the lantern into existing home automation systems
+
+### State diagram
+![](image/diagram.svg) 
+
+### Updating the firmware
+
+OTA firmware and data upload.
 
  It is highly advised to test uploads on a separate esp32 board before uploading to the lantern.
  The usb port and flash button are only accesible when the lantern is disassembled, any runtime errors which prevent the OTA upload handler to start will therefore completely block the lantern and require dissasembly to fix.
@@ -41,12 +51,63 @@ The suggested data uploader does work over OTA provided there is not password se
 Alternatively there are tools available which can generate ([spiffsgen.py](https://github.com/espressif/esp-idf/blob/166c30e7b2ed1dcaae56179329540a862915208a/components/spiffs/spiffsgen.py)) and upload ([otatool.py](https://github.com/espressif/esp-idf/blob/166c30e/components/app_update/otatool.py)) spiffs data.
 
 
+
+
+
 ### Connect to WiFi
 
 visit the network "Schrodingers lantern"
 ![](image/wifimanager.png)
 Select your network from the dropdown menu, enter your wifi credentials and press "Submit". The ESP will restart and if the wifi credentials are correct you will be redirected to the webUI using mDNS.
 ![](image/webUI.png)
+
+### API
+The API endpoints made available are listed below. Some endpoints require parameters, if these parameters are not set a status 400 will be returned alongside an error message.
+<div style="background: #337ab320; border-radius: 5px; border: #337ab3 2px solid; margin-bottom:7px">
+    <div style="border-color: #337ab3;padding:10px">
+        <span style="background-color: #337ab3;padding: 5px 10px;border-radius:3px; margin-right:20px; font-weight:bold">GET</span> 
+        <span style="font-weight:bold; display:inline-block">​/api/status</span>
+        <span style="display:inline-block; margin-left:30px">Get the current settings and connection status
+        </span>
+    </div>
+</div>
+
+<div style="background: #337ab320; border-radius: 5px; border: #337ab3 2px solid; margin-bottom:7px">
+    <div style="border-color: #337ab3;padding:10px">
+        <span style="background-color: #337ab3;padding: 5px 10px;border-radius:3px; margin-right:20px; font-weight:bold">GET</span> 
+        <span style="font-weight:bold; display:inline-block">​/api/set</span>
+        <span style="display:inline-block; margin-left:30px">Set the color and brightness of the lantern: <pre style="display:inline; padding:1px; margin:0 5px">brightness=0-255</pre> or <pre style="display:inline; padding:1px; margin:0 5px">red & blue & green=0-255</pre>
+        </span>
+    </div>
+</div>
+
+<div style="background: #337ab320; border-radius: 5px; border: #337ab3 2px solid; margin-bottom:7px">
+    <div style="border-color: #337ab3;padding:10px">
+        <span style="background-color: #337ab3;padding: 5px 10px;border-radius:3px; margin-right:20px; font-weight:bold">GET</span> 
+        <span style="font-weight:bold; display:inline-block;">​/api/effect</span>
+        <span style="display:inline-block; margin-left:30px">Set the effect by means of <pre style="display:inline; padding:1px; margin:0 5px">id= 0 | 1 | 2</pre> and <pre style="display:inline; padding:1px; margin:0 5px">state= 0 | 1</pre>
+        </span>
+    </div>
+</div>
+
+<div style="background: #337ab320; border-radius: 5px; border: #337ab3 2px solid; margin-bottom:7px">
+    <div style="border-color: #337ab3;padding:10px">
+        <span style="background-color: #337ab3;padding: 5px 10px;border-radius:3px; margin-right:20px; font-weight:bold">GET</span> 
+        <span style="font-weight:bold; display:inline-block">​/api/toggle</span>
+        <span style="display:inline-block; margin-left:30px">Toggle the lantern on or off by passing  <pre style="display:inline; padding:1px; margin:0 5px">state= 1 | 0</pre>
+        </span>
+    </div>
+</div>
+
+<div style="background: #337ab320; border-radius: 5px; border: #337ab3 2px solid; margin-bottom:7px">
+    <div style="border-color: #337ab3;padding:10px">
+        <span style="background-color: #337ab3;padding: 5px 10px;border-radius:3px; margin-right:20px; font-weight:bold">GET</span> 
+        <span style="font-weight:bold; display:inline-block">​/api/reset</span>
+        <span style="display:inline-block; margin-left:30px">Reset the currently stored wifi credentials
+        </span>
+    </div>
+</div>
+
 
 ## Boot messages
 
