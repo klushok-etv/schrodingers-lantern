@@ -15,6 +15,7 @@
 // History:
 //    15-Jun-2021     bdenouden   First semi complete version
 //    22-Jul-2021     bdenouden   OTA & mDNS added
+//    30-Jul-2021     bdenouden   Firmware release V1
 //
 //---------------------------------------------------------------------------
 
