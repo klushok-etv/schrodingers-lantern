@@ -71,7 +71,7 @@ uint8_t brightness = 255;
 Effect* fx[] = {
   new RGB_step(leds, 1000),
   new Flame(leds, 10, 20, 7),
-  new Disco(leds, 200, 10)  
+  new Disco(leds, 200, 10)
 };
 const uint8_t fxLength = 3;
 uint8_t fxIndex = 0;
@@ -105,6 +105,9 @@ void setup()
 
   // show files saved on SPIFFS
   listDir(SPIFFS, "/", 1);
+
+  // set WiFi hostname
+  WiFi.hostname(HOSTNAME);
 
   // start wifiManager or webUI
   if (!WiFiManagerBegin(AP_SSID, AP_PASS))
