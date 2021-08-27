@@ -6,19 +6,18 @@
     <br>
 </p>
 
-This lantern is a graduation present for our klushok committee member Werner.
+This lantern is a graduation present for our klushok committee member Werner. One of his many contributions to the klushok was the "schrodingers box": a mystery box which contains multiple small projects. 
 
-
-## Concept
-![concept drawing](image/assembly.png)
-The concept is based on the logo from Schrodingers Box: a mysterybox containing random projects and components created by Werner.
-The sides of the lantern contain a modified version of the logo behind which a filter is glued. 
+The sides of the lantern contain a modified version of the schrodingers box logo behind which a filter is glued. 
 This filter diffuses the light from an LED string attached to a central cylinder.
 The lantern is connected to power via a micro usb connector in the bottom and controlled via an ESP32 hidden in the top.
-The lantern can be turned on or off via a capacitive sensor hidden just below the top center square, further control like setting colors and effects can be done via the user interface hosted by the ESP32 called the webUI.
+The lantern can be turned on or off via a capacitive sensor hidden just below the top center square, further control like setting colors and effects can be done via the user interface hosted by the ESP32. This interface will be called the webUI.
 
 To ensure the rigidity of the lantern, the top is connected to the bottom via a m4 threaded rod down the center of the LED cylinder.
 The sides lock into place using printed tabs.
+
+![construction](image/construction.jpg)
+![result](image/animation.webp)
 
 ## Firmware
 The firmware of the lantern is the most challenging part because once the lantern is closed off, the ESP cannot be reached.
@@ -42,15 +41,14 @@ This wifi manager will create a wireless network to which the user can connect u
 
 By default this network is called "Schrodingers lantern" and uses the password "schrodinger" as defined in `credentials.h.template`. 
 
-Connect to this network and visit [http://192.168.4.1](http://192.168.4.1), the first figure below should appear.
-
-![](image/wifimanager.png)
+Connect to this network and visit [http://192.168.4.1](http://192.168.4.1), the left interface from the figure below should appear.
 
 Select your network from the dropdown menu, enter your wifi credentials and press "Submit". The ESP will restart and  you will be redirected to the webUI using mDNS.
 
-If the wifi credentials are correct, the lantern will blink green on restart and the webUI will appear after a few seconds. If the lantern blinks blue, a wifi connection could not be established and the wifi manager will be launched again.
+If the wifi credentials are correct, the lantern will blink green on restart and the webUI (right interface from figure below) will appear after a few seconds. If the lantern blinks blue, a wifi connection could not be established and the wifi manager will be launched again.
 
-![](image/webUI.png)
+![](image/webUI.jpg)
+
 
 #### Troubleshooting
 If the webUI does not appear after entering your credentials in the wifi manager, follow these steps until the webUI appears:
@@ -144,7 +142,7 @@ When adding files to the SPIFFS, it is important to keep in mind that there is a
 That means it is advised to keep filenames short and not use deeply nested directories, as the full path of each file (including directories, '/' characters, base name, dot and extension) has to be 31 chars at a maximum. For example, the filename `/website/images/bird_thumbnail.jpg` is 34 chars and will cause some problems if used, for example in `exists()` or in case another file starts with the same first 31 characters. [[source](https://arduino-esp8266.readthedocs.io/en/latest/filesystem.html)]
 
 ### data upload
-The suggested data uploader does work over OTA provided there is not password set. To upload the data contained on the SPI storage of the ESP32 you could therefore first flash firmware without an OTA password, upload the data folder and then reflash with OTA password. After uploading the data folder you will have to go through the wifi manager to reconnect to your local network.
+The suggested data uploader does work over OTA provided there is no password set. To upload the data contained on the SPI storage of the ESP32 you could therefore first flash firmware without an OTA password, upload the data folder and then reflash with OTA password. After uploading the data folder you will have to go through the wifi manager to reconnect to your local network.
 
 Alternatively there are tools available which can generate ([spiffsgen.py](https://github.com/espressif/esp-idf/blob/166c30e7b2ed1dcaae56179329540a862915208a/components/spiffs/spiffsgen.py)) and upload ([otatool.py](https://github.com/espressif/esp-idf/blob/166c30e/components/app_update/otatool.py)) spiffs data.
 
@@ -172,4 +170,5 @@ The lantern is in AP mode, follow the [Connect to wifi](#Connect-to-wifi) steps.
 
 
 # Known points of improvement
-- rescanning for wifi networks requires a device reboot, this should be built into the wifi manager
+- rescanning for wifi networks requires a device reboot, this should be built into the wifi manager.
+- A wifi connection is required for the API and webUI to deploy, these should both be launched alongside the wifimanager if no network connection is detected.
