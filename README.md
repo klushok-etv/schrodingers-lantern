@@ -22,7 +22,7 @@ Most usb chargers can satisfy this requirement but make sure to validate this be
 ![construction](image/construction.jpg)
 ![result](image/animation.webp)
 
-## Firmware
+# Firmware
 The firmware of the lantern is the most challenging part because once the lantern is closed off, the ESP cannot be reached.
 
 The required funtionallity is:
@@ -37,7 +37,7 @@ The state diagram below shows the steps taken when the lantern is connected to p
 The color of the 'launch webUI' and 'launch wifi manager' block represent the boot message presented when that route is taken. See section [boot messages](#boot-messages) for a more detailed description of all possible boot messages.
 
 
-### Connect to WiFi
+## Connect to WiFi
 
 When Schrodinigers lantern is connected to power for the first time or the previously stored wifi credentials won't work, the wifi manger is launched.
 This wifi manager will create a wireless network to which the user can connect using the credentials defined in the `credentials.h` file.
@@ -53,14 +53,14 @@ If the wifi credentials are correct, the lantern will blink green on restart and
 ![](image/webUI.jpg)
 
 
-### Troubleshooting
+## Troubleshooting
 If the webUI does not appear after entering your credentials in the wifi manager, follow these steps until the webUI appears:
 
 1. Refresh the page
 2. Chances are your device (like most android devices) does not support mDNS, use tools like nmap or other network analysers to obtain the local ip address of the lantern and use it to connect instead.
 3. Power cycle the lantern, wait until the green boot message has appeared and try to connect again.
 
-### Using the webUI
+## Using the webUI
 ![](image/webUI-items.svg)
 
 1. Status field. This field will update every few seconds to display the connection status and signal strength of the lantern. Upon a connection loss, the status will change to "Connecting..." until a connection was re-established. When a connection is re-established, all settings on the webUI will be updated. 
@@ -71,7 +71,7 @@ If the webUI does not appear after entering your credentials in the wifi manager
 Clicking on a panel will turn it on (and disable all other effects).
 
 
-### API
+## API
 The API endpoints which are added by default are listed below. Some endpoints require parameters, if these parameters are not set a status 400 will be returned alongside an error message.
 
 | Method| Endpoint | Description                   |
@@ -114,7 +114,7 @@ Don't forget to reflash again with a new password set otherwise anyone on your n
 Alternatively there are tools available which can generate ([spiffsgen.py](https://github.com/espressif/esp-idf/blob/166c30e7b2ed1dcaae56179329540a862915208a/components/spiffs/spiffsgen.py)) and upload ([otatool.py](https://github.com/espressif/esp-idf/blob/166c30e/components/app_update/otatool.py)) spiffs data.
 
 
-## Boot messages
+# Boot messages
 
 ### 4 long red flashes
 The SPIFFS memory could not (correctly) be read. The lantern will restart automatically. If this keeps happening, connect a usb cable to the ESP to check what is happening via the serial bus.
